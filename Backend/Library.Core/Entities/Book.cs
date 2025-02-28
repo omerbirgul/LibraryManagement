@@ -7,4 +7,6 @@ public class Book
     public string Author { get; set; }
     public string ISBN { get; set; }
     public bool IsAvaliable { get; set; } = true;
+
+    public ICollection<BookRental> Rentals { get; set; }
 }
