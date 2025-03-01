@@ -12,5 +12,6 @@ public static class ServiceExtension
         services.AddAutoMapper(typeof(GeneralMapping));
 
         services.AddScoped<IBookService, BookService>();
+        services.AddScoped<IUserService, UserService>();
     }
 }
