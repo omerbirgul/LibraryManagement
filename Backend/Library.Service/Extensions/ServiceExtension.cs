@@ -5,7 +5,7 @@ namespace Library.Service.Extensions;
 
 public static class ServiceExtension
 {
-    public static void AddServices(this IServiceCollection services)
+    public static void AddServicesExt(this IServiceCollection services)
     {
         services.AddAutoMapper(typeof(GeneralMapping));
     }

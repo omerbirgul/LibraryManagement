@@ -1,8 +1,10 @@
 using Library.Data.Extensions;
+using Library.Service.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDatabaseExt(builder.Configuration);
+builder.Services.AddServicesExt();
 
 
 
