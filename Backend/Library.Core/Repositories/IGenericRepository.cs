@@ -4,7 +4,7 @@ namespace Library.Core.Repositories;
 
 public interface IGenericRepository<T> where T : class
 {
-    IQueryable<T> GetAllAsync();
+    IQueryable<T> GetAll();
     ValueTask<T?> GetByIdAsync(int id);
     ValueTask CreateAsync(T entity);
     void Delete(T entity);
