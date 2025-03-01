@@ -1,3 +1,3 @@
 namespace Library.Core.Dtos.BookDtos;
 
-public record UpdateBookDto(int Id, string Title, string Author, string ISBN);
+public record UpdateBookDto(string Title, string Author, string ISBN);

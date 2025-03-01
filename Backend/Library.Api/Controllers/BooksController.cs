@@ -49,10 +49,10 @@ namespace Library.Api.Controllers;
             return CustomActionResult(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateBook(UpdateBookDto request)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateBook(int id, UpdateBookDto request)
         {
-            var result = await _bookService.UpdateBookAsync(request);
+            var result = await _bookService.UpdateBookAsync(id, request);
             return CustomActionResult(result);
         }
 

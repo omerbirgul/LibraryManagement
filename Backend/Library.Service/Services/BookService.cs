@@ -80,9 +80,9 @@ public class BookService : IBookService
         return ResultService.Success();
     }
 
-    public async Task<ResultService> UpdateBookAsync(UpdateBookDto updateBookDto)
+    public async Task<ResultService> UpdateBookAsync(int bookId, UpdateBookDto updateBookDto)
     {
-        var book = await _bookRepository.GetByIdAsync(updateBookDto.Id);
+        var book = await _bookRepository.GetByIdAsync(bookId);
         if (book is null)
             return ResultService.Fail("No Book found to update", HttpStatusCode.NotFound);
 

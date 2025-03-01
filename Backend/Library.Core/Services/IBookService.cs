@@ -11,7 +11,7 @@ public interface IBookService
     Task<ResultService<List<BookRentalHistoryDto>>> GetBookRentalHistoryAsync(int bookId);
     
     Task<ResultService> AddBookAsync(CreateBookDto createBookDto);
-    Task<ResultService> UpdateBookAsync(UpdateBookDto updateBookDto);
+    Task<ResultService> UpdateBookAsync(int bookId, UpdateBookDto updateBookDto);
     Task<ResultService> DeleteBookAsync(int bookId);
     
     Task<ResultService> RentBookAsync(int bookId, string userId);
