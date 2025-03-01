@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDatabaseExt(builder.Configuration);
 builder.Services.AddServicesExt();
+builder.Services.AddServicesExt();
 
 
 
