@@ -1,4 +1,6 @@
+using Library.Core.Repositories;
 using Library.Data.Database;
+using Library.Data.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,5 +24,7 @@ public static class DatabaseExtension
                 });
         });
 
+
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
     }
 }
