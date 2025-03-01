@@ -84,7 +84,7 @@ public class BookService : IBookService
     {
         var book = await _bookRepository.GetByIdAsync(updateBookDto.Id);
         if (book is null)
-            return ResultService.Fail("The book that you requested not found", HttpStatusCode.NotFound);
+            return ResultService.Fail("No Book found to update", HttpStatusCode.NotFound);
 
         bool isIsbnExist = await _bookRepository
             .Where(b => b.ISBN == updateBookDto.ISBN && book.ISBN != b.ISBN)
