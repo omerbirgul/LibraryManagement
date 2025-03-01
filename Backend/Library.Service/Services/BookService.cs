@@ -6,6 +6,7 @@ using Library.Core.Entities;
 using Library.Core.Repositories;
 using Library.Core.Services;
 using Library.Core.UnitOfWork;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Service.Services;
@@ -14,15 +15,17 @@ public class BookService : IBookService
 {
     private readonly IGenericRepository<Book> _bookRepository;
     private readonly IGenericRepository<BookRental> _bookRentalRepository;
+    private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
 
-    public BookService(IGenericRepository<Book> bookRepository, IMapper mapper, IUnitOfWork unitOfWork, IGenericRepository<BookRental> bookRentalRepository)
+    public BookService(IGenericRepository<Book> bookRepository, IMapper mapper, IUnitOfWork unitOfWork, IGenericRepository<BookRental> bookRentalRepository, UserManager<AppUser> userManager)
     {
         _bookRepository = bookRepository;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _bookRentalRepository = bookRentalRepository;
+        _userManager = userManager;
     }
     
     public async Task<ResultService<List<BookDto>>> GetAllBooksAsync()
@@ -109,9 +112,34 @@ public class BookService : IBookService
         return ResultService.Success(HttpStatusCode.NoContent);
     }
 
-    public Task<ResultService> RentBookAsync(int bookId, string userId)
+    public async Task<ResultService> RentBookAsync(int bookId, string userId)
     {
-        throw new NotImplementedException();
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+            return ResultService.Fail("User not found");
+        
+        var book = await _bookRepository.GetByIdAsync(bookId);
+        if(book is null)
+            return ResultService.Fail("Book not found");
+    
+        if(!book.IsAvaliable)
+            return ResultService.Fail("Book alread rented");
+
+        var bookRental = new BookRental()
+        {
+            BookId = bookId,
+            UserId = userId,
+            RentalDate = DateTime.Now,
+            ReturnDate = null
+        };
+
+        await _bookRentalRepository.CreateAsync(bookRental);
+        
+        book.IsAvaliable = false;
+        _bookRepository.Update(book);
+
+        await _unitOfWork.SaveChangesAsync();
+        return ResultService.Success();
     }
 
     public Task<ResultService> ReturnBookAsync(int bookId, string userId)
