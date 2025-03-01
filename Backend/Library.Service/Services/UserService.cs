@@ -1,5 +1,7 @@
 using System.Net;
 using AutoMapper;
+using Library.Core.Dtos.BookDtos;
+using Library.Core.Dtos.BookRentalDtos;
 using Library.Core.Dtos.ResponseDto;
 using Library.Core.Dtos.UserDtos;
 using Library.Core.Entities;
@@ -41,12 +43,32 @@ public class UserService : IUserService
 
     public async Task<ResultService<UserDto>> GetUserByIdAsync(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.Users
+            .Include(u => u.Rentals)
+            .ThenInclude(br => br.Book)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
         if (user is null)
             return ResultService<UserDto>.Fail("User not found");
-        var userDto = _mapper.Map<UserDto>(user);
+
+        var userDto = new UserDto(
+            user.Id,
+            user.FullName,
+            user.Email,
+            user.IsApproved,
+            user.Rentals.Select(br => new UserBookRentalDto(
+                br.BookId,
+                br.Book.Title,
+                br.Book.ISBN,
+                br.RentalDate,
+                br.ReturnDate
+            )).ToList()
+        );
+
+
         return ResultService<UserDto>.Succcess(userDto);
     }
+
 
     public async Task<ResultService<List<UserDto>>> GetAllUsersAsync()
     {
