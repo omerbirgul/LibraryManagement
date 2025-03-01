@@ -1,3 +1,4 @@
+using Library.Api.Extensions;
 using Library.Data.Extensions;
 using Library.Service.Extensions;
 
@@ -5,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDatabaseExt(builder.Configuration);
 builder.Services.AddServicesExt();
-builder.Services.AddServicesExt();
+builder.Services.AddSecurityExt();
 
 
 
