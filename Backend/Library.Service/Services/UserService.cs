@@ -64,16 +64,56 @@ public class UserService : IUserService
                 br.ReturnDate
             )).ToList()
         );
-
-
         return ResultService<UserDto>.Succcess(userDto);
     }
 
 
+    #region Include ve ThenInclude kullanılan yöntem
+
+    // public async Task<ResultService<List<UserDto>>> GetAllUsersAsync()
+    // {
+    //     var users = await _userManager.Users
+    //         .Include(u => u.Rentals)
+    //         .ThenInclude(br => br.Book)
+    //         .ToListAsync();
+    //     var userListDto = users.Select(u => new UserDto
+    //     (
+    //         u.Id,
+    //         u.FullName,
+    //         u.Email,
+    //         u.IsApproved,
+    //         u.Rentals?.Select(br => new UserBookRentalDto(
+    //             br.BookId,
+    //             br.Book.Title,
+    //             br.Book.ISBN, 
+    //             br.RentalDate,
+    //             br.ReturnDate
+    //         )).ToList() ?? new List<UserBookRentalDto>()
+    //     )).ToList();
+    //     return ResultService<List<UserDto>>.Succcess(userListDto);
+    // }
+
+    #endregion
+    
     public async Task<ResultService<List<UserDto>>> GetAllUsersAsync()
     {
-        var users = await _userManager.Users.ToListAsync();
-        var userListDto = _mapper.Map<List<UserDto>>(users);
+        var userListDto = await _userManager.Users
+            .Select(u => new UserDto(
+                u.Id,
+                u.FullName,
+                u.Email,
+                u.IsApproved,
+                u.Rentals.Select(br => new UserBookRentalDto(
+                    br.BookId,
+                    br.Book.Title,
+                    br.Book.ISBN,
+                    br.RentalDate,
+                    br.ReturnDate
+                )).ToList()
+            ))
+            .ToListAsync();
+
         return ResultService<List<UserDto>>.Succcess(userListDto);
     }
+
 }
