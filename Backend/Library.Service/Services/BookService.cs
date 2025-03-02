@@ -67,7 +67,17 @@ public class BookService : IBookService
         if (!rentalHistory.Any())
             return ResultService<List<BookRentalHistoryDto>>.Fail("This book has no rental history");
 
-        var rentalHistoryDtos = _mapper.Map<List<BookRentalHistoryDto>>(rentalHistory);
+        var rentalHistoryDtos = rentalHistory.Select(x => new BookRentalHistoryDto
+            (
+                x.BookId,
+                x.Book.Title,
+                x.Book.ISBN,
+                x.User.FullName,
+                x.UserId,
+                x.RentalDate,
+                x.ReturnDate
+            )
+        ).ToList();
         return ResultService<List<BookRentalHistoryDto>>.Succcess(rentalHistoryDtos);
     }
 

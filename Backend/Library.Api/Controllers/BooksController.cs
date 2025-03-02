@@ -35,10 +35,10 @@ namespace Library.Api.Controllers;
             return CustomActionResult(result);
         }
 
-        [HttpGet("GetBookRentalHistory/{id:int}")]
-        public async Task<IActionResult> GetBookRentalHistory(int id)
+        [HttpGet("GetBookRentalHistory/{bookId:int}")]
+        public async Task<IActionResult> GetBookRentalHistory(int bookId)
         {
-            var result = await _bookService.GetBookRentalHistoryAsync(id);
+            var result = await _bookService.GetBookRentalHistoryAsync(bookId);
             return CustomActionResult(result);
         }
 
@@ -60,6 +60,13 @@ namespace Library.Api.Controllers;
         public async Task<IActionResult> DeleteBook(int id)
         {
             var result = await _bookService.DeleteBookAsync(id);
+            return CustomActionResult(result);
+        }
+
+        [HttpPost("RentBook")]
+        public async Task<IActionResult> RentBook(int bookId, string userId)
+        {
+            var result = await _bookService.RentBookAsync(bookId, userId);
             return CustomActionResult(result);
         }
     }
