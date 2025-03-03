@@ -45,6 +45,11 @@ public class AuthService : IAuthService
             return ResultService<TokenDto>.Fail("Email or Password incorrect");
         }
 
+        if (user.IsApproved is false)
+        {
+            return ResultService<TokenDto>.Fail("Admin has not approved the membership yet.");
+        }
+
         var token = _tokenService.CreateToken(user);
         return ResultService<TokenDto>.Succcess(token);
     }
@@ -69,6 +74,11 @@ public class AuthService : IAuthService
             return ResultService.Fail("User not found");
         }
 
+        if (user.IsApproved is false)
+        {
+            return ResultService.Fail("Admin has not approved the membership yet.");
+        }
+
         var userRoles = await _userManager.GetRolesAsync(user);
         if (userRoles.Contains("admin"))
         {
@@ -86,6 +96,11 @@ public class AuthService : IAuthService
         if (user is null)
         {
             return ResultService.Fail("User not found");
+        }
+        
+        if (user.IsApproved is false)
+        {
+            return ResultService.Fail("Admin has not approved the membership yet.");
         }
 
         var userRoles = await _userManager.GetRolesAsync(user);

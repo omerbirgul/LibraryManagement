@@ -139,6 +139,11 @@ public class BookService : IBookService
         if (user is null)
             return ResultService.Fail("User not found");
         
+        if (user.IsApproved is false)
+        {
+            return ResultService.Fail("Admin has not approved the membership yet.");
+        }
+        
         var book = await _bookRepository.GetByIdAsync(bookId);
         if(book is null)
             return ResultService.Fail("Book not found");
@@ -168,6 +173,11 @@ public class BookService : IBookService
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
             return ResultService.Fail("User not found");
+        
+        if (user.IsApproved is false)
+        {
+            return ResultService.Fail("Admin has not approved the membership yet.");
+        }
         
         var book = await _bookRepository.GetByIdAsync(bookId);
         if (book is null)
