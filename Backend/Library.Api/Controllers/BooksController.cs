@@ -10,12 +10,10 @@ namespace Library.Api.Controllers;
     public class BooksController : CustomBaseController
     {
         private readonly IBookService _bookService;
-        private readonly ITokenService _tokenService;
 
-        public BooksController(IBookService bookService, ITokenService tokenService)
+        public BooksController(IBookService bookService)
         {
             _bookService = bookService;
-            _tokenService = tokenService;
         }
 
         [HttpGet]
@@ -82,9 +80,17 @@ namespace Library.Api.Controllers;
 
         [HttpPost("RentBook")]
         [Authorize]
-        public async Task<IActionResult> RentBook(int bookId, string userId)
+        public async Task<IActionResult> RentBook(RentBookRequest request)
         {
-            var result = await _bookService.RentBookAsync(bookId, userId);
+            var result = await _bookService.RentBookAsync(request.BookId, request.UserId);
+            return CustomActionResult(result);
+        }
+
+        [HttpPost("ReturnBook")]
+        [Authorize]
+        public async Task<IActionResult> ReturnBook(ReturnBookRequest request)
+        {
+            var result = await _bookService.ReturnBookAsync(request.BookId, request.UserId);
             return CustomActionResult(result);
         }
         

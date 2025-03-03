@@ -161,8 +161,33 @@ public class BookService : IBookService
         return ResultService.Success();
     }
 
-    public Task<ResultService> ReturnBookAsync(int bookId, string userId)
+    public async Task<ResultService> ReturnBookAsync(int bookId, string userId)
     {
-        throw new NotImplementedException();
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+            return ResultService.Fail("User not found");
+        
+        var book = await _bookRepository.GetByIdAsync(bookId);
+        if (book is null)
+            return ResultService.Fail("book not found");
+
+        var bookRental = await _bookRentalRepository
+            .Where(br => br.BookId == book.Id &&
+                         br.UserId == userId &&
+                         br.ReturnDate == null)
+            .OrderByDescending(br => br.RentalDate)
+            .FirstOrDefaultAsync();
+        if (bookRental is null)
+        {
+            return ResultService.Fail("Book Rental history not found");
+        }
+        
+        bookRental.ReturnDate = DateTime.Now;;
+        book.IsAvaliable = true;
+        _bookRepository.Update(book);
+        _bookRentalRepository.Update(bookRental);
+        await _unitOfWork.SaveChangesAsync();
+
+        return ResultService.Success(HttpStatusCode.NoContent);
     }
 }
