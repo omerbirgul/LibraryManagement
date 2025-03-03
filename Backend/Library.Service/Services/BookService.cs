@@ -46,7 +46,9 @@ public class BookService : IBookService
 
     public async Task<ResultService<List<BookDto>>> GetBooksByTitle(string title)
     {
-        var books = await _bookRepository.Where(b => b.Title == title).ToListAsync();
+        var books = await _bookRepository
+            .Where(b => b.Title == title && b.IsAvaliable == true)
+            .ToListAsync();
         if (books is null || books.Count == 0)
             return ResultService<List<BookDto>>.Fail("Book not found", HttpStatusCode.NotFound);
         var booksAsDto = _mapper.Map<List<BookDto>>(books);
