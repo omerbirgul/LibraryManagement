@@ -19,7 +19,7 @@ namespace Library.Api.Controllers;
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> GetAllBooks()
         {
             var result = await _bookService.GetAllBooksAsync();
@@ -27,9 +27,17 @@ namespace Library.Api.Controllers;
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> GetBookById(int id)
         {
             var result = await _bookService.GetBookByIdAsync(id);
+            return CustomActionResult(result);
+        }
+
+        [HttpGet("SearchBookByName")]
+        public async Task<IActionResult> SearchBookByName(string bookName)
+        {
+            var result = await _bookService.GetBooksByTitle(bookName);
             return CustomActionResult(result);
         }
 
@@ -41,6 +49,7 @@ namespace Library.Api.Controllers;
         }
 
         [HttpGet("GetBookRentalHistory/{bookId:int}")]
+        [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> GetBookRentalHistory(int bookId)
         {
             var result = await _bookService.GetBookRentalHistoryAsync(bookId);
@@ -48,6 +57,7 @@ namespace Library.Api.Controllers;
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> CreateBook(CreateBookDto request)
         {
             var result = await _bookService.AddBookAsync(request);
@@ -55,6 +65,7 @@ namespace Library.Api.Controllers;
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> UpdateBook(int id, UpdateBookDto request)
         {
             var result = await _bookService.UpdateBookAsync(id, request);
@@ -62,6 +73,7 @@ namespace Library.Api.Controllers;
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             var result = await _bookService.DeleteBookAsync(id);
@@ -69,6 +81,7 @@ namespace Library.Api.Controllers;
         }
 
         [HttpPost("RentBook")]
+        [Authorize]
         public async Task<IActionResult> RentBook(int bookId, string userId)
         {
             var result = await _bookService.RentBookAsync(bookId, userId);

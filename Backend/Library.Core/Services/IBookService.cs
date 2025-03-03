@@ -7,6 +7,7 @@ public interface IBookService
 {
     Task<ResultService<List<BookDto>>> GetAllBooksAsync();
     Task<ResultService<BookDto>> GetBookByIdAsync(int id);
+    Task<ResultService<List<BookDto>>> GetBooksByTitle(string title);
     Task<ResultService<List<BookDto>>> GetAvaliableBooksAsync();
     Task<ResultService<List<BookRentalHistoryDto>>> GetBookRentalHistoryAsync(int bookId);
     
