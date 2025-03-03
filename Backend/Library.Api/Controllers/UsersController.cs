@@ -22,6 +22,14 @@ namespace Library.Api.Controllers;
             return CustomActionResult(result);
         }
 
+        [HttpDelete]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            var result = await _userService.DeleteUser(userId);
+            return CustomActionResult(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(string id)
         {

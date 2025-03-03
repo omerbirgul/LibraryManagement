@@ -41,6 +41,16 @@ public class UserService : IUserService
         return ResultService.Success(HttpStatusCode.Created);
     }
 
+    public async Task<ResultService> DeleteUser(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+            return ResultService.Fail("No user found to delete");
+
+        await _userManager.DeleteAsync(user);
+        return ResultService.Success(HttpStatusCode.NoContent);
+    }
+
     public async Task<ResultService<UserDto>> GetUserByIdAsync(string userId)
     {
         var user = await _userManager.Users
