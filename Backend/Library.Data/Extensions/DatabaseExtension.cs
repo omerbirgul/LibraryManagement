@@ -14,7 +14,7 @@ public static class DatabaseExtension
         var connectionStringOption = configuration
             .GetSection(ConnectionStringOption.Key)
             .Get<ConnectionStringOption>();
-
+        
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseMySql(connectionStringOption!.DefaultConnection, 
@@ -24,8 +24,8 @@ public static class DatabaseExtension
                     mysqlOptions.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName);
                 });
         });
-
-
+        
+        
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
     }

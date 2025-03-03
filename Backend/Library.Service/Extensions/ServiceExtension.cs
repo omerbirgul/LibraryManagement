@@ -10,8 +10,10 @@ public static class ServiceExtension
     public static void AddServicesExt(this IServiceCollection services)
     {
         services.AddAutoMapper(typeof(GeneralMapping));
-
+        
         services.AddScoped<IBookService, BookService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthService, AuthService>();
     }
 }

@@ -15,6 +15,7 @@ namespace Library.Api.Controllers
             return result.StatusCode switch
             {
                 HttpStatusCode.NoContent => NoContent(),
+                HttpStatusCode.Unauthorized => Unauthorized(),
                 _ => new ObjectResult(result) { StatusCode = result.StatusCode.GetHashCode() }
             };
         }
@@ -25,6 +26,7 @@ namespace Library.Api.Controllers
             return result.StatusCode switch
             {
                 HttpStatusCode.NoContent => NoContent(),
+                HttpStatusCode.Unauthorized => Unauthorized(),
                 _ => new ObjectResult(result) { StatusCode = result.StatusCode.GetHashCode() }
             };
         }

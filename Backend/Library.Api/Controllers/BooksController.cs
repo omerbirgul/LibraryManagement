@@ -1,5 +1,7 @@
 using Library.Core.Dtos.BookDtos;
 using Library.Core.Services;
+using Library.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,13 +10,16 @@ namespace Library.Api.Controllers;
     public class BooksController : CustomBaseController
     {
         private readonly IBookService _bookService;
+        private readonly ITokenService _tokenService;
 
-        public BooksController(IBookService bookService)
+        public BooksController(IBookService bookService, ITokenService tokenService)
         {
             _bookService = bookService;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllBooks()
         {
             var result = await _bookService.GetAllBooksAsync();
@@ -69,4 +74,5 @@ namespace Library.Api.Controllers;
             var result = await _bookService.RentBookAsync(bookId, userId);
             return CustomActionResult(result);
         }
+        
     }
