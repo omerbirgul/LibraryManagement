@@ -22,4 +22,20 @@ namespace Library.Api.Controllers;
             var result = await _authService.CreateTokenAsync(loginDto);
             return CustomActionResult(result);
         }
+
+        [HttpPost("AssignToAdminRole")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> AssignToAdminRole(string userName)
+        {
+            var result = await _authService.AssignToAdminRole(userName);
+            return CustomActionResult(result);
+        }
+
+        [HttpPost("AssignToManagerRole")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> AssignToManagerRole(string userName)
+        {
+            var result = await _authService.AssignToManagerRole(userName);
+            return CustomActionResult(result);
+        }
     }
