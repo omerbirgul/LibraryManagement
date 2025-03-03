@@ -19,7 +19,7 @@ namespace Library.Api.Controllers;
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllBooks()
         {
             var result = await _bookService.GetAllBooksAsync();

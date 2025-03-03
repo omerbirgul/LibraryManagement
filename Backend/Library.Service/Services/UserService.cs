@@ -115,5 +115,4 @@ public class UserService : IUserService
 
         return ResultService<List<UserDto>>.Succcess(userListDto);
     }
-
 }

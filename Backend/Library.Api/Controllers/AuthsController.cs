@@ -33,7 +33,7 @@ namespace Library.Api.Controllers;
 
         [HttpPost("AssignToManagerRole")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> AssignToManagerRole(string userName)
+        public async Task<IActionResult> AssignToManagerRole([FromBody] string userName)
         {
             var result = await _authService.AssignToManagerRole(userName);
             return CustomActionResult(result);
