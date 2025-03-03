@@ -23,6 +23,14 @@ namespace Library.Api.Controllers;
             return CustomActionResult(result);
         }
 
+        [HttpPatch("ApproveUser")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> ApproveUser([FromBody] string userId)
+        {
+            var result = await _authService.ApproveUser(userId);
+            return CustomActionResult(result);
+        }
+
         [HttpPost("AssignToAdminRole")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> AssignToAdminRole(string userName)

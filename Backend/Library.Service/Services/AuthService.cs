@@ -5,6 +5,7 @@ using Library.Core.Dtos.UserDtos;
 using Library.Core.Entities;
 using Library.Core.Services;
 using Library.Core.Settings;
+using Library.Core.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
@@ -16,13 +17,15 @@ public class AuthService : IAuthService
     private readonly RoleManager<AppRole> _roleManager;
     private readonly SuperAdminSettings _superAdminSettings;
     private readonly ITokenService _tokenService;
+    private readonly IUnitOfWork _unitOfWork;
 
     public AuthService(UserManager<AppUser> userManager, ITokenService tokenService,
-        RoleManager<AppRole> roleManager, IOptions<SuperAdminSettings> superAdminSettings)
+        RoleManager<AppRole> roleManager, IOptions<SuperAdminSettings> superAdminSettings, IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
         _tokenService = tokenService;
         _roleManager = roleManager;
+        _unitOfWork = unitOfWork;
         _superAdminSettings = superAdminSettings.Value;
     }
 
@@ -44,6 +47,18 @@ public class AuthService : IAuthService
 
         var token = _tokenService.CreateToken(user);
         return ResultService<TokenDto>.Succcess(token);
+    }
+
+    public async Task<ResultService> ApproveUser(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+            return ResultService.Fail("User not found");
+
+        user.IsApproved = true;
+        await _userManager.UpdateAsync(user);
+        await _unitOfWork.SaveChangesAsync();
+        return ResultService.Success(HttpStatusCode.NoContent);
     }
 
     public async Task<ResultService> AssignToAdminRole(string userName)
