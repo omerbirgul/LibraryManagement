@@ -22,4 +22,5 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, string>
     public DbSet<AppUser> AppUsers { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<BookRental> BookRentals { get; set; }
+    public DbSet<UserRefreshToken> RefreshTokens { get; set; }
 }
