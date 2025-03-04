@@ -23,6 +23,13 @@ namespace Library.Api.Controllers;
             return CustomActionResult(result);
         }
 
+        [HttpPost("CreateTokenByRefreshToken")]
+        public async Task<IActionResult> CreateTokenByRefreshToken([FromBody]string token)
+        {
+            var result = await _authService.CreateTokenByRefreshToken(token);
+            return CustomActionResult(result);
+        }
+
         [HttpPatch("ApproveUser")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> ApproveUser([FromBody] string userId)
