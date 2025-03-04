@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Library.Core.Dtos.TokenDtos;
 using Library.Core.Entities;
 using Library.Core.Services;
@@ -35,8 +36,18 @@ public class TokenService : ITokenService
         return userClaimList;
     }
 
+    private string CreateRefreshToken()
+    {
+        var numberBytes = new Byte[32];
+        using var random = RandomNumberGenerator.Create();
+        random.GetBytes(numberBytes);
+        return Convert.ToBase64String(numberBytes);
+    }
+
     public TokenDto CreateToken(AppUser user)
     {
+        var accessTokenExpiration = DateTime.Now.AddMinutes(_jwtSettings.AccessTokenExpiration);
+        var refreshTokenExpiration = DateTime.Now.AddDays(_jwtSettings.RefreshTokenExpiration);
         var securityKey = SignService.GetSymmetricSecurityKey(_jwtSettings.SecretKey);
 
         SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -51,11 +62,13 @@ public class TokenService : ITokenService
 
         JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
         var token = handler.WriteToken(securityToken);
-        var tokenDto = new TokenDto()
-        {
-            Token = token
-        };
+        var tokenDto = new TokenDto
+        (
+            token,
+            accessTokenExpiration,
+            CreateRefreshToken(),
+            refreshTokenExpiration
+        );
         return tokenDto;
     }
-    
 }

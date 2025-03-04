@@ -192,6 +192,33 @@ namespace Library.Data.Migrations
                     b.ToTable("BookRentals");
                 });
 
+            modelBuilder.Entity("Library.Core.Entities.UserRefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -317,6 +344,17 @@ namespace Library.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Library.Core.Entities.UserRefreshToken", b =>
+                {
+                    b.HasOne("Library.Core.Entities.AppUser", "User")
+                        .WithOne("RefreshToken")
+                        .HasForeignKey("Library.Core.Entities.UserRefreshToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Library.Core.Entities.AppRole", null)
@@ -370,6 +408,9 @@ namespace Library.Data.Migrations
 
             modelBuilder.Entity("Library.Core.Entities.AppUser", b =>
                 {
+                    b.Navigation("RefreshToken")
+                        .IsRequired();
+
                     b.Navigation("Rentals");
                 });
 
