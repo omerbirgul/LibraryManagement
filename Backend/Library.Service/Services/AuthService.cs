@@ -3,10 +3,12 @@ using Library.Core.Dtos.ResponseDto;
 using Library.Core.Dtos.TokenDtos;
 using Library.Core.Dtos.UserDtos;
 using Library.Core.Entities;
+using Library.Core.Repositories;
 using Library.Core.Services;
 using Library.Core.Settings;
 using Library.Core.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Library.Service.Services;
@@ -18,14 +20,16 @@ public class AuthService : IAuthService
     private readonly SuperAdminSettings _superAdminSettings;
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IGenericRepository<UserRefreshToken> _refreshTokenRepository;
 
     public AuthService(UserManager<AppUser> userManager, ITokenService tokenService,
-        RoleManager<AppRole> roleManager, IOptions<SuperAdminSettings> superAdminSettings, IUnitOfWork unitOfWork)
+        RoleManager<AppRole> roleManager, IOptions<SuperAdminSettings> superAdminSettings, IUnitOfWork unitOfWork, IGenericRepository<UserRefreshToken> refreshTokenRepository)
     {
         _userManager = userManager;
         _tokenService = tokenService;
         _roleManager = roleManager;
         _unitOfWork = unitOfWork;
+        _refreshTokenRepository = refreshTokenRepository;
         _superAdminSettings = superAdminSettings.Value;
     }
 
@@ -51,6 +55,28 @@ public class AuthService : IAuthService
         }
 
         var token = _tokenService.CreateToken(user);
+        var userRefreshToken = await _refreshTokenRepository
+            .Where(x => x.UserId == user.Id)
+            .SingleOrDefaultAsync();
+
+        if (userRefreshToken is null)
+        {
+            await _refreshTokenRepository.CreateAsync(new UserRefreshToken()
+            {
+                UserId = user.Id,
+                Token = token.RefreshToken,
+                ExpirationDate = token.RefreshTokenExpiration
+            });
+        }
+
+        else
+        {
+            userRefreshToken.Token = token.RefreshToken;
+            userRefreshToken.ExpirationDate = token.RefreshTokenExpiration;
+        }
+
+        _refreshTokenRepository.Update(userRefreshToken);
+        await _unitOfWork.SaveChangesAsync();
         return ResultService<TokenDto>.Succcess(token);
     }
 
