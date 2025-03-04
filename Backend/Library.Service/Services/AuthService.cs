@@ -80,6 +80,32 @@ public class AuthService : IAuthService
         return ResultService<TokenDto>.Succcess(token);
     }
 
+    public async Task<ResultService<TokenDto>> CreateTokenByRefreshToken(string token)
+    {
+        var existRefreshToken = await _refreshTokenRepository
+            .Where(x => x.Token == token)
+            .SingleOrDefaultAsync();
+
+        if (existRefreshToken is null)
+        {
+            return ResultService<TokenDto>.Fail("Refresh token not found");
+        }
+
+        var user = await _userManager.FindByIdAsync(existRefreshToken.UserId);
+        if (user is null)
+        {
+            return ResultService<TokenDto>.Fail("User not found");
+        }
+
+        var tokenDto = _tokenService.CreateToken(user);
+        existRefreshToken.Token = tokenDto.RefreshToken;
+        existRefreshToken.ExpirationDate = tokenDto.RefreshTokenExpiration;
+        
+        _refreshTokenRepository.Update(existRefreshToken);
+        await _unitOfWork.SaveChangesAsync();
+        return ResultService<TokenDto>.Succcess(tokenDto);
+    }
+
     public async Task<ResultService> ApproveUser(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
