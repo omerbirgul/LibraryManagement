@@ -35,5 +35,6 @@ namespace Library.Mvc.Controllers
             TempData["RentBookSuccess"] = "Kitap başarıyla kiralandı";
             return RedirectToAction("Index", "Home");
         }
+
     }
 }

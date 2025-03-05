@@ -1,0 +1,38 @@
+﻿@model List<BookDto>
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Hello ....Username....</h1>
+
+
+<div class="container">
+    <h1 class="text-center mb-4">Kitap Listesi</h1>
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text">Yazar: @item.Author</p>
+                        <p class="card-text">ISBN: @item.ISBN</p>
+                        <p class="card-text">
+                            Durum:
+                            @if (!item.IsAvaliable)
+                            {
+                                <span class="badge bg-success">Kitaba Sahipsiniz</span>
+                            }
+
+                        </p>
+                        <form asp-controller="Book" asp-action="ReturnBook" method="post" class="rent-form">
+                            <input type="hidden" name="id" value="@item.Id" id="rentData-@item.Id" />
+                            <button type="submit" class="btn btn-primary rent-book-button">Kirala</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div

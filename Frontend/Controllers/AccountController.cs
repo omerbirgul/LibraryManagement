@@ -1,6 +1,7 @@
 ﻿using Library.Mvc.Dtos;
 using Library.Mvc.Dtos.TokenDtos;
 using Library.Mvc.Dtos.UserDtos;
+using Library.Mvc.Services.AccountServices;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
@@ -9,13 +10,15 @@ using System.Text.Json;
 namespace Library.Mvc.Controllers;
 public class AccountController : Controller
 {
+    private readonly IAccountService _accountService;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly HttpClient _client;
 
-    public AccountController(IHttpClientFactory httpClientFactory, HttpClient client)
+    public AccountController(IHttpClientFactory httpClientFactory, HttpClient client, IAccountService accountService)
     {
         _httpClientFactory = httpClientFactory;
         _client = client;
+        _accountService = accountService;
     }
 
     public IActionResult Index()
@@ -80,5 +83,13 @@ public class AccountController : Controller
         HttpContext.Session.Remove("token");
         HttpContext.Session.Remove("RefreshToken");
         return RedirectToAction("Index", "Home");
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> Profile()
+    {
+        var response = await _accountService.GetRentedBooksByUser();
+        return View(response.Data);
     }
 }

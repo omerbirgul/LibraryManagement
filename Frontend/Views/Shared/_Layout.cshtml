@@ -57,7 +57,7 @@
                     @if (!string.IsNullOrEmpty(username))
                     {
                     <li class="nav-item">
-                        <span class="navbar-text me-2">@username</span>
+                        <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Profile">@username</a>
                     </li>
                     <li class="nav-item">
                         <form method="post" asp-controller="Account" asp-action="Logout">
