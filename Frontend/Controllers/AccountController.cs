@@ -1,0 +1,82 @@
+﻿using Library.Mvc.Dtos;
+using Library.Mvc.Dtos.TokenDtos;
+using Library.Mvc.Dtos.UserDtos;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text;
+using System.Text.Json;
+
+namespace Library.Mvc.Controllers;
+public class AccountController : Controller
+{
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly HttpClient _client;
+
+    public AccountController(IHttpClientFactory httpClientFactory, HttpClient client)
+    {
+        _httpClientFactory = httpClientFactory;
+        _client = client;
+    }
+
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register(UserRegisterDto registerDto)
+    {
+        var client = _httpClientFactory.CreateClient();
+        var jsonData = JsonConvert.SerializeObject(registerDto);
+        StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync("http://localhost:5097/api/Users", content);
+        if (response.IsSuccessStatusCode)
+        {
+            TempData["RegisterSuccess"] = "User registered in successfully";
+            return RedirectToAction("Login", "Account");
+        }
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(UserLoginDto loginDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(loginDto);
+        }
+        var client = _httpClientFactory.CreateClient();
+        var response = await client.PostAsJsonAsync("http://localhost:5097/api/Auths/CreateToken", loginDto);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            ModelState.AddModelError("", "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
+            return View(loginDto);
+        }
+
+        TempData["LoginFailed"] = "Login failed";
+
+        var result = await response.Content.ReadFromJsonAsync<ApiResponse<TokenDto>>();
+        HttpContext.Session.SetString("token", result.Data.AccessToken);
+
+        return RedirectToAction("Index", "Home"); 
+    }
+
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Remove("token");
+        return RedirectToAction("Index", "Home");
+    }
+}
