@@ -1,8 +1,33 @@
-﻿@{
+﻿@model List<BookDto>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <h1 class="text-center mb-4">Kitap Listesi</h1>
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text">Yazar: @item.Author</p>
+                        <p class="card-text">ISBN: @item.ISBN</p>
+                        <p class="card-text">
+                            Durum:
+                            @if (item.IsAvaliable)
+                            {
+                                <span class="badge bg-success">Mevcut</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Mevcut Değil</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
