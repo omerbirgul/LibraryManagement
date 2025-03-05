@@ -1,0 +1,37 @@
+﻿@model UserLoginDto
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (TempData["RegisterSuccess"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["RegisterSuccess"]
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid && ViewData.ModelState[""].Errors.Any())
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState[""].Errors)
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+
+<h1>Login</h1>
+
+<form asp-controller="Account" asp-action="Login" method="post">
+    <div class="form-group">
+        <label asp-for="Email">Email address</label>
+        <input type="email" class="form-control" asp-for="Email" aria-describedby="emailHelp" placeholder="Enter email">
+    </div>
+    <div class="form-group">
+        <label asp-for="Password">Password</label>
+        <input type="password" class="form-control" asp-for="Password" placeholder="Password">
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

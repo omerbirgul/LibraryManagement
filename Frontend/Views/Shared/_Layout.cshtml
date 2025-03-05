@@ -1,4 +1,24 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@using Library.Mvc.Services.JwtServices
+@inject IHttpContextAccessor HttpContextAccessor
+
+@* @{
+    var username = HttpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+
+} *@
+
+@{
+    var token = HttpContextAccessor.HttpContext.Session.GetString("token");
+    string username = "";
+
+    if (!string.IsNullOrEmpty(token))
+    {
+        username = JwtHelper.GetClaimValue(token, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
+    }
+}
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -34,10 +54,10 @@
 
                 <!-- Sağ taraf: Kullanıcı durumu kontrolü -->
                 <ul class="navbar-nav">
-                    @if (User.Identity.IsAuthenticated)
+                    @if (!string.IsNullOrEmpty(username))
                     {
                     <li class="nav-item">
-                        <span class="navbar-text me-2">Merhaba, @User.Identity.Name</span>
+                        <span class="navbar-text me-2">@username</span>
                     </li>
                     <li class="nav-item">
                         <form method="post" asp-controller="Account" asp-action="Logout">
