@@ -1,7 +1,16 @@
+using Library.Mvc.Services.BookServices;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<IBookService, BookService>();
+
 
 var app = builder.Build();
 
@@ -18,6 +27,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
