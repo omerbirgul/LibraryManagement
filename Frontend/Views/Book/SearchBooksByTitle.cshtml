@@ -1,25 +1,12 @@
 ﻿@model List<BookDto>
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "SearchBooksByTitle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@if(TempData["RentBookError"] != null)
-{
-    <div class="alert alert-danger" role="alert">
-        @TempData["RentBookError"]
-    </div>
-}
-
-
-@if(TempData["RentBookSuccess"] != null)
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["RentBookSuccess"]
-    </div>
-}
+<h1>SearchBooksByTitle</h1>
 
 <div class="container">
-    <h1 class="text-center mb-4">Kitap Listesi</h1>
     <div class="row">
         @foreach (var item in Model)
         {
@@ -40,13 +27,9 @@
                                 <span class="badge bg-danger">Mevcut Değil</span>
                             }
                         </p>
-                        <form asp-controller="Book" asp-action="RentBook" method="post" class="rent-form">
-                            <input type="hidden" name="id" value="@item.Id" id="rentData-@item.Id" />
-                            <button type="submit" class="btn btn-primary rent-book-button">Kirala</button>
-                        </form>
                     </div>
                 </div>
             </div>
         }
     </div>
-</div
+</div>

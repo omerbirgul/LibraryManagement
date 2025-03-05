@@ -10,6 +10,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddHttpClient<BookService>();
 
 
 var app = builder.Build();

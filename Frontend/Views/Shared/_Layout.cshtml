@@ -47,8 +47,8 @@
                 </ul>
 
                 <!-- Orta kısım: Kitap Arama Formu -->
-                <form class="d-flex me-auto" asp-controller="Books" asp-action="Search" method="get">
-                    <input class="form-control me-2" type="search" name="query" placeholder="Kitap ara..." aria-label="Search">
+                <form class="d-flex me-auto" asp-controller="Book" asp-action="SearchBooksByTitle" method="get">
+                    <input class="form-control me-2" type="search" name="bookTitle" placeholder="Kitap ara..." aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Ara</button>
                 </form>
 

@@ -70,6 +70,7 @@ public class AccountController : Controller
 
         var result = await response.Content.ReadFromJsonAsync<ApiResponse<TokenDto>>();
         HttpContext.Session.SetString("token", result.Data.AccessToken);
+        HttpContext.Session.SetString("RefreshToken", result.Data.RefreshToken);
 
         return RedirectToAction("Index", "Home"); 
     }
@@ -77,6 +78,7 @@ public class AccountController : Controller
     public IActionResult Logout()
     {
         HttpContext.Session.Remove("token");
+        HttpContext.Session.Remove("RefreshToken");
         return RedirectToAction("Index", "Home");
     }
 }

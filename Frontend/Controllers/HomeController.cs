@@ -19,7 +19,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         var bookResponse = await _bookService.GetAvailableBooks();
-        if(bookResponse is not null && string.IsNullOrEmpty(bookResponse.ErrorMessage))
+        if(bookResponse is not null)
         {
             return View(bookResponse.Data);
         }
