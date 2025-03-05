@@ -1,3 +1,4 @@
+using Library.Mvc.Services.AccountServices;
 using Library.Mvc.Services.BookServices;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddHttpClient<BookService>();
 
 
