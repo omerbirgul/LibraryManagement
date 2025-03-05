@@ -67,15 +67,16 @@ public class AuthService : IAuthService
                 Token = token.RefreshToken,
                 ExpirationDate = token.RefreshTokenExpiration
             });
+            
         }
 
         else
         {
             userRefreshToken.Token = token.RefreshToken;
             userRefreshToken.ExpirationDate = token.RefreshTokenExpiration;
+            _refreshTokenRepository.Update(userRefreshToken);
         }
 
-        _refreshTokenRepository.Update(userRefreshToken);
         await _unitOfWork.SaveChangesAsync();
         return ResultService<TokenDto>.Succcess(token);
     }
