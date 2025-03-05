@@ -1,3 +1,4 @@
+using Library.Core.Dtos.TokenDtos;
 using Library.Core.Dtos.UserDtos;
 using Library.Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -24,9 +25,9 @@ namespace Library.Api.Controllers;
         }
 
         [HttpPost("CreateTokenByRefreshToken")]
-        public async Task<IActionResult> CreateTokenByRefreshToken([FromBody]string token)
+        public async Task<IActionResult> CreateTokenByRefreshToken(CreateTokenByRefreshTokenRequest request)
         {
-            var result = await _authService.CreateTokenByRefreshToken(token);
+            var result = await _authService.CreateTokenByRefreshToken(request.Token);
             return CustomActionResult(result);
         }
 

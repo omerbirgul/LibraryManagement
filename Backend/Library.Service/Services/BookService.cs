@@ -202,4 +202,25 @@ public class BookService : IBookService
 
         return ResultService.Success(HttpStatusCode.NoContent);
     }
+
+    public async Task<ResultService<List<BookDto>>> RentedBooksByUser(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+            return ResultService<List<BookDto>>.Fail("User not found");
+
+        var rentedBooksByUser = await _bookRentalRepository
+            .Where(br => br.UserId == userId && br.ReturnDate == null)
+            .Select(x => new BookDto
+            (
+                x.BookId,
+                x.Book.Title,
+                x.Book.Title,
+                x.Book.ISBN,
+                x.Book.IsAvaliable
+            ))
+            .ToListAsync();
+
+        return ResultService<List<BookDto>>.Succcess(rentedBooksByUser);
+    }
 }

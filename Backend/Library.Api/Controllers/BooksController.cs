@@ -54,6 +54,14 @@ namespace Library.Api.Controllers;
             return CustomActionResult(result);
         }
 
+        [HttpGet("GetRentedBooksByUser")]
+        [Authorize]
+        public async Task<IActionResult> GetRentedBooksByUser(string userId)
+        {
+            var result = await _bookService.RentedBooksByUser(userId);
+            return CustomActionResult(result);
+        }
+
         [HttpPost]
         [Authorize(Roles = "admin, manager")]
         public async Task<IActionResult> CreateBook(CreateBookDto request)
