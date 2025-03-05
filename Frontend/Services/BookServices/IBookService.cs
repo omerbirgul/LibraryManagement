@@ -6,5 +6,6 @@ namespace Library.Mvc.Services.BookServices
     public interface IBookService
     {
         Task<ApiResponse<List<BookDto>>> GetAvailableBooks();
+        Task<ApiResponse<List<BookDto>>> GetBooksByTitle();
     }
 }
