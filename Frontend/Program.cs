@@ -1,5 +1,6 @@
 using Library.Mvc.Services.AccountServices;
 using Library.Mvc.Services.BookServices;
+using Library.Mvc.Services.JwtServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("AuthorizeClient")
+    .AddHttpMessageHandler<RefreshTokenHandler>();
 
+builder.Services.AddTransient<RefreshTokenHandler>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddHttpClient<BookService>();

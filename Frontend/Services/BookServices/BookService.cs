@@ -102,7 +102,7 @@ public class BookService : IBookService
             UserId = userId
         };
 
-        var client = _httpClientFactory.CreateClient();
+        var client = _httpClientFactory.CreateClient("AuthorizeClient");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         var response = await client.PostAsJsonAsync("http://localhost:5097/api/Books/ReturnBook", returnBookRequest);
 

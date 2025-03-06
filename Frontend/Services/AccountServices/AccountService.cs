@@ -31,7 +31,7 @@ namespace Library.Mvc.Services.AccountServices
                 return new ApiResponse<List<BookDto>> { ErrorMessage = "User Id not found in the token" };
             }
 
-            var client = _httpClientFactory.CreateClient();
+            var client = _httpClientFactory.CreateClient("AuthorizeClient");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var response = await client.GetFromJsonAsync<ApiResponse<List<BookDto>>>
