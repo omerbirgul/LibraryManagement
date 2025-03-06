@@ -1,6 +1,7 @@
 ﻿using Library.Mvc.Dtos;
 using Library.Mvc.Dtos.UserDtos;
 using Library.Mvc.Services.RoleServices;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 
 namespace Library.Mvc.Services.UserServices;
@@ -16,30 +17,73 @@ public class UserService : IUserService
         _contextAccessor = contextAccessor;
     }
 
-    public async Task<ApiResponse<UserDto>> GetUserByIdAsync(string id)
+    public async Task ApproveUserAsync(string userId)
     {
-        var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+        var accessToken = _contextAccessor.HttpContext?.Session.GetString("token");
         if (string.IsNullOrEmpty(accessToken))
         {
-            return new ApiResponse<UserDto>() { ErrorMessage = "access token not found" };
+            throw new Exception("Access token not found");
         }
 
         var roles = GetUserRoles.GetRolesFromToken(accessToken);
-        if (roles.Contains("admin") || roles.Contains("manager"))
+        if (!roles.Contains("admin"))
         {
-            var client = _clientFactory.CreateClient("AuthorizeClient");
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            throw new Exception("Not authorized");
+        }
 
-            var response = await client.GetFromJsonAsync<ApiResponse<UserDto>>("http://localhost:5097/api/Users/" + id);
-            if (response is null)
+        var client = _clientFactory.CreateClient("AuthorizeClient");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        try
+        {
+            var response = await client.PatchAsJsonAsync($"http://localhost:5097/api/Auths/ApproveUser/{userId}", new { });
+
+            if (!response.IsSuccessStatusCode)
             {
-                return new ApiResponse<UserDto>() { ErrorMessage = "api request is null" };
+                throw new Exception($"API request failed: {response.StatusCode}");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new Exception($"API request failed: {ex.Message}");
+        }
+    }
+
+
+    public async Task<ApiResponse<UserDto>> GetUserByIdAsync(string id)
+    {
+        var accessToken = _contextAccessor.HttpContext?.Session.GetString("token");
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            return new ApiResponse<UserDto> { ErrorMessage = "Access token not found" };
+        }
+
+        var roles = GetUserRoles.GetRolesFromToken(accessToken);
+        if (!roles.Contains("admin") && !roles.Contains("manager"))
+        {
+            return new ApiResponse<UserDto> { ErrorMessage = "Not authorized" };
+        }
+
+        var client = _clientFactory.CreateClient("AuthorizeClient");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        try
+        {
+            var response = await client.GetFromJsonAsync<ApiResponse<UserDto>>($"http://localhost:5097/api/Users/{id}");
+
+            if (response == null)
+            {
+                return new ApiResponse<UserDto> { ErrorMessage = "API response is null" };
             }
 
             return response;
         }
-        return new ApiResponse<UserDto>() { ErrorMessage = "Not authorized" };
+        catch (HttpRequestException ex)
+        {
+            return new ApiResponse<UserDto> { ErrorMessage = $"API request failed: {ex.Message}" };
+        }
     }
+
 
     public async Task<ApiResponse<List<UserDto>>> GetUserListAsync()
     {

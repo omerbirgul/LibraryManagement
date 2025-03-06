@@ -41,6 +41,7 @@
                         @if (!user.IsApproved)
                         {
                             <form asp-controller="User" asp-action="ApproveUser" method="post">
+                                <input type="hidden" name="userId" value="@user.Id" />
                                 <button class="btn btn-primary btn-sm">Onayla</button>
                             </form>
                         }

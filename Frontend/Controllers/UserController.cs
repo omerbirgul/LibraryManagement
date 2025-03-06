@@ -23,5 +23,11 @@ namespace Library.Mvc.Controllers
             var response = await _userService.GetUserByIdAsync(id);
             return View(response.Data);
         }
+
+        public async Task<IActionResult> ApproveUser(string userId)
+        {
+            await _userService.ApproveUserAsync(userId);
+            return RedirectToAction("GetAllUserList");
+        }
     }
 }
