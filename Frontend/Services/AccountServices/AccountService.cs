@@ -44,5 +44,17 @@ namespace Library.Mvc.Services.AccountServices
 
             return response;
         }
+
+
+        public async Task RevokeRefreshTokenAsync(string userId)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.DeleteAsync("http://localhost:5097/api/Auths/RevokeRefreshToken/" + userId);
+            if (response is null)
+            {
+                throw new Exception("api response is null");
+            }
+        }
+
     }
 }

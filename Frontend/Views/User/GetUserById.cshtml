@@ -1,0 +1,63 @@
+﻿@model UserDto
+@{
+    ViewData["Title"] = "GetUserById";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h2>Kullanıcı Detayları</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">@Model.FullName</h5>
+            <p class="card-text"><strong>Email:</strong> @Model.Email</p>
+            <p class="card-text">
+                <strong>Onay Durumu:</strong>
+                @if (Model.IsApproved)
+                {
+                    <span class="badge bg-success">Onaylı</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Onaysız</span>
+                }
+            </p>
+            <form asp-controller="User" asp-action="DeleteUser" method="post">
+                <button class="btn btn-danger btn-sm">Kullanıcıyı Sil</button>
+            </form>
+        </div>
+    </div>
+
+    <h3>Kiralama Geçmişi</h3>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Kitap Adı</th>
+                <th>ISBN</th>
+                <th>Kiralama Tarihi</th>
+                <th>İade Tarihi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rental in Model.UserRentalHistory)
+            {
+                <tr>
+                    <td>@rental.BookTitle</td>
+                    <td>@rental.ISBN</td>
+                    <td>@rental.RentalDate.ToShortDateString()</td>
+                    <td>
+                        @if (rental.ReturnDate.HasValue)
+                        {
+                            @rental.ReturnDate.Value.ToShortDateString()
+                        }
+                        else
+                        {
+                            <span>İade Edilmedi</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

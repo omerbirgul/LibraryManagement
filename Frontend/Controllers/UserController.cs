@@ -17,5 +17,11 @@ namespace Library.Mvc.Controllers
             var response = await _userService.GetUserListAsync();
             return View(response.Data);
         }
+
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            var response = await _userService.GetUserByIdAsync(id);
+            return View(response.Data);
+        }
     }
 }

@@ -4,8 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>GetAllUserList</h1>
-
 
 <h2>Kullanıcı Listesi</h2>
 
@@ -47,8 +45,9 @@
                             </form>
                         }
 
-                        <form asp-controller="User" asp-action="GetUserById">
-                            <button class="btn btn-info btn-sm" onclick="showRentalHistory('@user.Id')">Kiralama Geçmişi</button>
+                        <form asp-controller="User" asp-action="GetUserById" method="get">
+                            <input type="hidden" name="id" value="@user.Id"/>
+                            <button class="btn btn-info btn-sm">Kiralama Geçmişi</button>
                         </form>
                     </div>
                 </td>

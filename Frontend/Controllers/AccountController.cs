@@ -2,8 +2,10 @@
 using Library.Mvc.Dtos.TokenDtos;
 using Library.Mvc.Dtos.UserDtos;
 using Library.Mvc.Services.AccountServices;
+using Library.Mvc.Services.JwtServices;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
@@ -11,14 +13,14 @@ namespace Library.Mvc.Controllers;
 public class AccountController : Controller
 {
     private readonly IAccountService _accountService;
+    private readonly IHttpContextAccessor _contextAccessor;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly HttpClient _client;
 
-    public AccountController(IHttpClientFactory httpClientFactory, HttpClient client, IAccountService accountService)
+    public AccountController(IHttpClientFactory httpClientFactory, IAccountService accountService, IHttpContextAccessor contextAccessor)
     {
         _httpClientFactory = httpClientFactory;
-        _client = client;
         _accountService = accountService;
+        _contextAccessor = contextAccessor;
     }
 
     public IActionResult Index()
@@ -78,8 +80,12 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Home"); 
     }
 
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
+        var token = HttpContext.Session.GetString("token");
+        var userId = JwtHelper.GetClaimValue(token, ClaimTypes.NameIdentifier);
+        //var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+        await _accountService.RevokeRefreshTokenAsync(userId);
         HttpContext.Session.Remove("token");
         HttpContext.Session.Remove("RefreshToken");
         return RedirectToAction("Index", "Home");
