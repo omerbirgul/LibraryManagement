@@ -1,6 +1,7 @@
 using Library.Mvc.Services.AccountServices;
 using Library.Mvc.Services.BookServices;
 using Library.Mvc.Services.JwtServices;
+using Library.Mvc.Services.UserServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddHttpClient("AuthorizeClient")
 builder.Services.AddTransient<RefreshTokenHandler>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddHttpClient<BookService>();
 
 

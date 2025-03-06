@@ -1,0 +1,100 @@
+﻿@model List<UserDto>
+@{
+    ViewData["Title"] = "GetAllUserList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>GetAllUserList</h1>
+
+
+<h2>Kullanıcı Listesi</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ad Soyad</th>
+            <th>Email</th>
+            <th>Onay Durumu</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td>
+                    @if (user.IsApproved)
+                    {
+                        <span class="badge bg-success">Onaylı</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Onaysız</span>
+                    }
+                </td>
+                <td>
+                    <!-- Kullanıcıyı Sil Butonu -->
+                    <button class="btn btn-danger" onclick="deleteUser('@user.Id')">Sil</button>
+
+                    <!-- Kullanıcıyı Onayla Butonu -->
+                    @if (!user.IsApproved)
+                    {
+                        <button class="btn btn-primary" onclick="approveUser('@user.Id')">Onayla</button>
+                    }
+
+                    <!-- Kiralama Geçmişini Görüntüle Butonu -->
+                    <button class="btn btn-info" onclick="showRentalHistory('@user.Id')">Kiralama Geçmişi</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal for Rental History -->
+<div class="modal fade" id="rentalHistoryModal" tabindex="-1" aria-labelledby="rentalHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rentalHistoryModalLabel">Kiralama Geçmişi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="rentalHistoryBody">
+                <!-- Kiralama geçmişi buraya yüklenecek -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function deleteUser(userId) {
+            // Kullanıcı silme işlemi için API çağrısı yapılabilir
+            alert('Kullanıcı silindi: ' + userId);
+        }
+
+        function approveUser(userId) {
+            // Kullanıcı onaylama işlemi için API çağrısı yapılabilir
+            alert('Kullanıcı onaylandı: ' + userId);
+        }
+
+        function showRentalHistory(userId) {
+            // Kiralama geçmişini göstermek için modal'ı dolduruyoruz
+            var user = @Html.Raw(Json.Serialize(Model)); // Tüm kullanıcıları model olarak JSON'a çeviriyoruz
+            var userData = user.find(u => u.Id === userId); // Kullanıcıyı ID ile buluyoruz
+
+            var rentalHistoryContent = '<ul>';
+            userData.UserRentalHistory.forEach(rental => {
+                rentalHistoryContent += `<li>${rental.BookTitle} - ${rental.RentalDate}</li>`;
+            });
+            rentalHistoryContent += '</ul>';
+
+            // Modal içeriğini güncelle
+            document.getElementById('rentalHistoryBody').innerHTML = rentalHistoryContent;
+            // Modal'ı göster
+            var modal = new bootstrap.Modal(document.getElementById('rentalHistoryModal'));
+            modal.show();
+        }
+    </script>
+}
