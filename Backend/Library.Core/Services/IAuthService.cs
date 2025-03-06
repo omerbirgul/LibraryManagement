@@ -8,6 +8,7 @@ public interface IAuthService
 {
     Task<ResultService<TokenDto>> CreateTokenAsync(LoginDto loginDto);
     Task<ResultService<TokenDto>> CreateTokenByRefreshToken(string token);
+    Task<ResultService> RevokeRefreshToken(string userId);
     Task<ResultService> ApproveUser(string userId);
     Task<ResultService> AssignToAdminRole(string userName);
     Task<ResultService> AssignToManagerRole(string userName);

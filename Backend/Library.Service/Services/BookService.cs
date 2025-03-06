@@ -210,7 +210,7 @@ public class BookService : IBookService
             return ResultService<List<BookDto>>.Fail("User not found");
 
         var rentedBooksByUser = await _bookRentalRepository
-            .Where(br => br.UserId == userId && br.ReturnDate == null)
+            .Where(br => br.UserId == user.Id && br.ReturnDate == null)
             .Select(x => new BookDto
             (
                 x.BookId,

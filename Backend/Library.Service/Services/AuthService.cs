@@ -107,6 +107,20 @@ public class AuthService : IAuthService
         return ResultService<TokenDto>.Succcess(tokenDto);
     }
 
+    public async Task<ResultService> RevokeRefreshToken(string userId)
+    {
+        var refreshToken =  await _refreshTokenRepository
+            .Where(x => x.UserId == userId)
+            .SingleOrDefaultAsync();
+        if (refreshToken is null)
+        {
+            return ResultService.Fail("refresh token not found");
+        }
+        _refreshTokenRepository.Delete(refreshToken);
+        await _unitOfWork.SaveChangesAsync();
+        return ResultService.Success(HttpStatusCode.NoContent);
+    }
+
     public async Task<ResultService> ApproveUser(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);

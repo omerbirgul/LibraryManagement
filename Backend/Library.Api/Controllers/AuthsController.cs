@@ -31,6 +31,13 @@ namespace Library.Api.Controllers;
             return CustomActionResult(result);
         }
 
+        [HttpDelete("RevokeRefreshToken/{userId}")]
+        public async Task<IActionResult> RevokeRefreshToken(string userId)
+        {
+            var result = await _authService.RevokeRefreshToken(userId);
+            return CustomActionResult(result);
+        }
+
         [HttpPatch("ApproveUser")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> ApproveUser([FromBody] string userId)
