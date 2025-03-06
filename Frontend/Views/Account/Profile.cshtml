@@ -7,6 +7,13 @@
 <h1>Hello ....Username....</h1>
 
 
+@if (TempData["ReturnBookSuccess"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["ReturnBookSuccess"]
+    </div>
+}
+
 <div class="container">
     <h1 class="text-center mb-4">Kitap Listesi</h1>
     <div class="row">
@@ -28,7 +35,7 @@
                         </p>
                         <form asp-controller="Book" asp-action="ReturnBook" method="post" class="rent-form">
                             <input type="hidden" name="id" value="@item.Id" id="rentData-@item.Id" />
-                            <button type="submit" class="btn btn-primary rent-book-button">Kirala</button>
+                            <button type="submit" class="btn btn-primary rent-book-button">Kitabı iade et</button>
                         </form>
                     </div>
                 </div>

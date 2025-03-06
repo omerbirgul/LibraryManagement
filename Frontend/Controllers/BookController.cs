@@ -36,5 +36,17 @@ namespace Library.Mvc.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public async Task<IActionResult> ReturnBook(int id)
+        {
+            var response = await _bookService.ReturnBookAsync(id);
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            {
+                return RedirectToAction("Profile", "Account");
+            }
+
+            TempData["ReturnBookSuccess"] = "Kitap başarıyla iade edildi";
+            return RedirectToAction("Profile", "Account");
+        }
+
     }
 }

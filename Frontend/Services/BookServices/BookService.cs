@@ -57,7 +57,6 @@ public class BookService : IBookService
         }
 
         var userId = JwtHelper.GetClaimValue(accessToken, ClaimTypes.NameIdentifier);
-        //userId = JwtHelper.GetClaimValue(token, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -80,5 +79,38 @@ public class BookService : IBookService
         }
 
         return await response.Content.ReadFromJsonAsync<ApiResponse>();
+    }
+
+    public async Task<ApiResponse> ReturnBookAsync(int bookId)
+    {
+        var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            return new ApiResponse { ErrorMessage = "Access token not found in the session" };
+        }
+
+        var userId = JwtHelper.GetClaimValue(accessToken, ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return new ApiResponse { ErrorMessage = "User Id not found in the token" };
+        }
+
+        var returnBookRequest = new ReturnBookRequest
+        {
+            BookId = bookId,
+            UserId = userId
+        };
+
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        var response = await client.PostAsJsonAsync("http://localhost:5097/api/Books/ReturnBook", returnBookRequest);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            return new ApiResponse { ErrorMessage = errorMessage };
+        }
+        return new ApiResponse() { };
     }
 }
