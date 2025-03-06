@@ -1,5 +1,6 @@
 ﻿@using System.Security.Claims
 @using Library.Mvc.Services.JwtServices
+@using Library.Mvc.Services.RoleServices
 @inject IHttpContextAccessor HttpContextAccessor
 
 @* @{
@@ -9,11 +10,13 @@
 
 @{
     var token = HttpContextAccessor.HttpContext.Session.GetString("token");
+    var roles = new List<string>();
     string username = "";
 
     if (!string.IsNullOrEmpty(token))
     {
         username = JwtHelper.GetClaimValue(token, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
+        roles = GetUserRoles.GetRolesFromToken(token);
     }
 }
 
@@ -44,7 +47,13 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
                     </li>
-                </ul>
+                        @if(roles.Contains("admin") || roles.Contains("manager"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="GetAllUserList">Users</a>
+                            </li>
+                        }
+                    </ul>
 
                 <!-- Orta kısım: Kitap Arama Formu -->
                 <form class="d-flex me-auto" asp-controller="Book" asp-action="SearchBooksByTitle" method="get">
