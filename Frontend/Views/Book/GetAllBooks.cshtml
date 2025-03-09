@@ -1,0 +1,83 @@
+﻿@model List<BookDto>
+@{
+    ViewData["Title"] = "GetAllBooks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-4">Kitap Listesi</h2>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Kitap Adı</th>
+                    <th>Yazar</th>
+                    <th>ISBN</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td>@book.Id</td>
+                        <td>@book.Title</td>
+                        <td>@book.Author</td>
+                        <td>@book.ISBN</td>
+                        <td class="@(book.IsAvaliable ? "available" : "rented")">
+                            @(book.IsAvaliable ? "✔ Mevcut" : "✖ Kirada")
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <form asp-controller="Book" asp-action="Edit" method="get">
+                                    <input type="hidden" name="id" value="@book.Id" />
+                                    <button type="submit" class="btn btn-warning btn-sm">Düzenle</button>
+                                </form>
+                                <form asp-controller="Book" asp-action="DeleteBook" method="post" onsubmit="return confirm('Bu kitabı silmek istediğinize emin misiniz?');">
+                                    <input type="hidden" name="id" value="@book.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                                </form>
+                                <form asp-controller="Book" asp-action="RentalHistory" method="get">
+                                    <input type="hidden" name="id" value="@book.Id" />
+                                    <button type="submit" class="btn btn-info btn-sm">Kiralama Geçmişi</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 900px;
+    }
+
+    .card {
+        border-radius: 10px;
+        background: #f8f9fa;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 5px;
+    }
+
+    .table-bordered th, .table-bordered td {
+        border: 1px solid #dee2e6;
+    }
+
+    .available {
+        color: green;
+        font-weight: bold;
+    }
+
+    .rented {
+        color: red;
+        font-weight: bold;
+    }
+</style>
