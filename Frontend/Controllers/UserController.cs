@@ -1,4 +1,6 @@
-﻿using Library.Mvc.Services.UserServices;
+﻿using Library.Mvc.Services.RoleServices;
+using Library.Mvc.Services.UserServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Mvc.Controllers
@@ -6,20 +8,42 @@ namespace Library.Mvc.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IHttpContextAccessor contextAccessor)
         {
             _userService = userService;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<IActionResult> GetAllUserList()
         {
+            var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var roles = GetUserRoles.GetRolesFromToken(accessToken);
+            if(!roles.Contains("admin") || !roles.Contains("manager"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var response = await _userService.GetUserListAsync();
             return View(response.Data);
         }
 
         public async Task<IActionResult> GetUserById(string id)
         {
+            var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var roles = GetUserRoles.GetRolesFromToken(accessToken);
+            if (!roles.Contains("admin") || !roles.Contains("manager"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var response = await _userService.GetUserByIdAsync(id);
             return View(response.Data);
         }

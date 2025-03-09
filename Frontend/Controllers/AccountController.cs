@@ -55,8 +55,17 @@ public class AccountController : Controller
             return View(loginDto);
         }
 
-        await _accountService.LoginAsync(loginDto);
-        return RedirectToAction("Index", "Home"); 
+        try
+        {
+            await _accountService.LoginAsync(loginDto);
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, "Email veya Parola hatalı.");
+            return View(loginDto);  
+        }
+
+        return RedirectToAction("Index", "Home");
     }
 
     public async Task<IActionResult> Logout()
