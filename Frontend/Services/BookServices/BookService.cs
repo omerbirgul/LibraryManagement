@@ -1,6 +1,7 @@
 ﻿using Library.Mvc.Dtos;
 using Library.Mvc.Dtos.BookDtos;
 using Library.Mvc.Services.JwtServices;
+using Library.Mvc.Services.RoleServices;
 using Newtonsoft.Json;
 using NuGet.Common;
 using System.Net.Http.Headers;
@@ -12,13 +13,11 @@ public class BookService : IBookService
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IHttpContextAccessor _contextAccessor;
-    private readonly HttpClient _httpClient;
 
-    public BookService(IHttpClientFactory httpClientFactory, IHttpContextAccessor contextAccessor, HttpClient httpClient)
+    public BookService(IHttpClientFactory httpClientFactory, IHttpContextAccessor contextAccessor)
     {
         _httpClientFactory = httpClientFactory;
         _contextAccessor = contextAccessor;
-        _httpClient = httpClient;
     }
 
     public async Task<ApiResponse<List<BookDto>>> GetAvailableBooks()
@@ -112,5 +111,37 @@ public class BookService : IBookService
             return new ApiResponse { ErrorMessage = errorMessage };
         }
         return new ApiResponse() { };
+    }
+
+    public async Task CreateBook(CreateBookRequest request)
+    {
+        var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            throw new Exception("Access token not found");
+        }
+
+        var roles = GetUserRoles.GetRolesFromToken(accessToken);
+        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        {
+            throw new Exception("Not authorized");
+        }
+
+        var client = _httpClientFactory.CreateClient("AuthorizeClient");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        try
+        {
+            var response = await client.PostAsJsonAsync("http://localhost:5097/api/Books", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API request failed: {response.StatusCode}");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new Exception($"API request failed: {ex.Message}");
+        }
     }
 }

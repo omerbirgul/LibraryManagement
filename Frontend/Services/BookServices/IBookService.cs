@@ -9,5 +9,6 @@ namespace Library.Mvc.Services.BookServices
         Task<ApiResponse<List<BookDto>>> GetBooksByTitle(string bookTitle);
         Task<ApiResponse> RentBookAsync(int bookId);
         Task<ApiResponse> ReturnBookAsync(int bookId);
+        Task CreateBook(CreateBookRequest request);
     }
 }
