@@ -1,0 +1,29 @@
+﻿@model BookDto
+@{
+    ViewData["Title"] = "UpdateBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>UpdateBook</h1>
+
+<form asp-controller="Book" asp-action="UpdateBook" method="post">
+    <div class="form-group">
+        <label for="Title">Title</label>
+        <input type="text" class="form-control" id="Title" name="Title" value="@Model.Title" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Author">Author</label>
+        <input type="text" class="form-control" id="Author" name="Author" value="@Model.Author" required />
+    </div>
+
+    <div class="form-group">
+        <label for="ISBN">ISBN</label>
+        <input type="text" maxlength="13" minlength="13" class="form-control" id="ISBN" required pattern="\d{13}" title="ISBN numarası 13 rakamdan oluşmalıdır" name="ISBN" value="@Model.ISBN" required />
+    </div>
+
+
+    <input type="hidden" name="bookId" value="@Model.Id" />
+
+    <button type="submit" class="btn btn-primary mt-4">Update Book</button>
+</form>

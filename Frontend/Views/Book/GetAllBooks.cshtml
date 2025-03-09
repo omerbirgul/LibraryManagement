@@ -31,8 +31,8 @@
                         </td>
                         <td>
                             <div class="btn-group" role="group">
-                                <form asp-controller="Book" asp-action="Edit" method="get">
-                                    <input type="hidden" name="id" value="@book.Id" />
+                                <form asp-controller="Book" asp-action="UpdateBook" method="get">
+                                    <input type="hidden" name="bookId" value="@book.Id" />
                                     <button type="submit" class="btn btn-warning btn-sm">Düzenle</button>
                                 </form>
                                 <form asp-controller="Book" asp-action="DeleteBook" method="post" onsubmit="return confirm('Bu kitabı silmek istediğinize emin misiniz?');">

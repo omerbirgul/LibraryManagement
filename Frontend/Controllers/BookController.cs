@@ -32,6 +32,11 @@ namespace Library.Mvc.Controllers
 
         public async Task<IActionResult> RentBook(int id)
         {
+            var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
             var response = await _bookService.RentBookAsync(id);
             if (!string.IsNullOrEmpty(response.ErrorMessage))
             {
@@ -70,6 +75,20 @@ namespace Library.Mvc.Controllers
         public async Task<IActionResult> DeleteBook(int id)
         {
             await _bookService.DeleteBookAsync(id);
+            return RedirectToAction("GetAllBooks", "Book");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateBook(int bookId)
+        {
+            var book = await _bookService.GetBookById(bookId);
+            return View(book.Data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateBook(int bookId, UpdateBookRequest request)
+        {
+            await _bookService.UpdateBook(bookId, request);
             return RedirectToAction("GetAllBooks", "Book");
         }
 
