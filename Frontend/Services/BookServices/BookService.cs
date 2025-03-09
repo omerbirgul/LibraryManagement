@@ -1,5 +1,6 @@
 ﻿using Library.Mvc.Dtos;
 using Library.Mvc.Dtos.BookDtos;
+using Library.Mvc.Dtos.BookRentalDtos;
 using Library.Mvc.Services.JwtServices;
 using Library.Mvc.Services.RoleServices;
 using Newtonsoft.Json;
@@ -207,5 +208,32 @@ public class BookService : IBookService
         {
             throw new Exception($"API request failed: {ex.Message}");
         }
+    }
+
+    public async Task<ApiResponse<List<BookRentalHistoryDto>>> GetBookRentalHistoryById(int bookId)
+    {
+        var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            throw new Exception("Access token not found");
+        }
+
+        var roles = GetUserRoles.GetRolesFromToken(accessToken);
+        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        {
+            throw new Exception("Not authorized");
+        }
+
+        var client = _httpClientFactory.CreateClient("AuthorizeClient");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        var response = await client.GetFromJsonAsync<ApiResponse<List<BookRentalHistoryDto>>>("http://localhost:5097/api/Books/GetBookRentalHistory/" + bookId);
+
+        if (!string.IsNullOrEmpty(response.ErrorMessage))
+        {
+            return new ApiResponse<List<BookRentalHistoryDto>>() { ErrorMessage = response.ErrorMessage };
+        }
+            return response;
+
     }
 }
