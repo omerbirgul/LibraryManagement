@@ -37,15 +37,7 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(UserRegisterDto registerDto)
     {
-        var client = _httpClientFactory.CreateClient();
-        var jsonData = JsonConvert.SerializeObject(registerDto);
-        StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-        var response = await client.PostAsync("http://localhost:5097/api/Users", content);
-        if (response.IsSuccessStatusCode)
-        {
-            TempData["RegisterSuccess"] = "User registered in successfully";
-            return RedirectToAction("Login", "Account");
-        }
+        await _accountService.RegisterUserAsync(registerDto);
         return View();
     }
 

@@ -1,8 +1,11 @@
 ﻿using Library.Mvc.Dtos;
 using Library.Mvc.Dtos.BookDtos;
+using Library.Mvc.Dtos.UserDtos;
 using Library.Mvc.Services.JwtServices;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 
 namespace Library.Mvc.Services.AccountServices
 {
@@ -15,6 +18,18 @@ namespace Library.Mvc.Services.AccountServices
         {
             _httpClientFactory = httpClientFactory;
             _contextAccessor = contextAccessor;
+        }
+
+        public async Task RegisterUserAsync(UserRegisterDto registerDto)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var jsonData = JsonConvert.SerializeObject(registerDto);
+            StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("http://localhost:5097/api/Users", content);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("User registration failed");
+            }
         }
 
         public async Task<ApiResponse<List<BookDto>>> GetRentedBooksByUser()
