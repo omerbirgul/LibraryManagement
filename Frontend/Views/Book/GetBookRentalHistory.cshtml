@@ -1,0 +1,89 @@
+﻿@model List<BookRentalHistoryDto?>
+
+@{
+    ViewData["Title"] = "GetBookRentalHistory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="rental-history-container">
+    <h1 class="rental-history-title">@ViewBag.BookTitle Kiralama Geçmişi</h1>
+
+    @if (Model.Count == 0)
+    {
+        <p class="no-history-message">@ViewBag.NoHistoryMessage</p>
+    }
+    else
+    {
+        <table class="rental-history-table">
+            <thead>
+                <tr>
+                    <th>Kiralayan Kişi</th>
+                    <th>Kiralama Tarihi</th>
+                    <th>İade Tarihi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rental in Model)
+                {
+                    <tr>
+                        <td>@rental.RentedBy</td>
+                        <td>@rental.RentalDate.ToString("dd.MM.yyyy")</td>
+                        <td>
+                            @(rental.ReturnDate.HasValue ? rental.ReturnDate.Value.ToString("dd.MM.yyyy") : "Henüz iade edilmedi")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<style>
+    .rental-history-container {
+        width: 80%;
+        margin: 50px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .rental-history-title {
+        text-align: center;
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .no-history-message {
+        text-align: center;
+        font-size: 18px;
+        color: #888;
+    }
+
+    .rental-history-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .rental-history-table th, .rental-history-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .rental-history-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .rental-history-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .rental-history-table tr:hover {
+            background-color: #ddd;
+        }
+</style>

@@ -1,4 +1,5 @@
 ﻿using Library.Mvc.Dtos.BookDtos;
+using Library.Mvc.Dtos.BookRentalDtos;
 using Library.Mvc.Services.BookServices;
 using Library.Mvc.Services.JwtServices;
 using Microsoft.AspNetCore.Mvc;
@@ -72,7 +73,20 @@ namespace Library.Mvc.Controllers
             return RedirectToAction("GetAllBooks", "Book");
         }
 
+        public async Task<IActionResult> GetBookRentalHistory(int id)
+        {
+            var response = await _bookService.GetBookRentalHistoryById(id);
 
+            // Eğer veri boşsa, hata vermeden kullanıcıya uygun mesaj göster
+            if (response.Data == null || !response.Data.Any())
+            {
+                ViewBag.NoHistoryMessage = "Bu kitap için kiralama geçmişi bulunmamaktadır.";
+                return View(new List<BookRentalHistoryDto>()); // Boş bir liste dön
+            }
+
+            ViewBag.BookTitle = response.Data.First().BookTitle;
+            return View(response.Data);
+        }
 
     }
 }
