@@ -48,5 +48,17 @@ namespace Library.Mvc.Controllers
             return RedirectToAction("Profile", "Account");
         }
 
+        public IActionResult CreateBook()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateBook(CreateBookRequest request)
+        {
+            await _bookService.CreateBook(request);
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }

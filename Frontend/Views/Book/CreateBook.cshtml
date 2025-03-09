@@ -1,0 +1,45 @@
+﻿@model CreateBookRequest
+@{
+    ViewData["Title"] = "CreateBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-4">Yeni Kitap Ekle</h2>
+        <form asp-controller="Book" asp-action="CreateBook" method="post">
+            <div class="mb-3">
+                <label for="Title" class="form-label">Kitap Adı</label>
+                <input type="text" class="form-control" id="Title" name="Title" required>
+            </div>
+            <div class="mb-3">
+                <label for="Author" class="form-label">Yazar</label>
+                <input type="text" class="form-control" id="Author" name="Author" required>
+            </div>
+            <div class="mb-3">
+                <label for="ISBN" class="form-label">ISBN Numarası</label>
+                <input type="text" maxlength="13" minlength="13" class="form-control" id="ISBN" name="ISBN" required pattern="\d{13}" title="ISBN numarası 13 rakamdan oluşmalıdır">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 500px;
+    }
+    .card {
+        border-radius: 10px;
+        background: #f8f9fa;
+    }
+    .btn-primary {
+        background: #007bff;
+        border: none;
+    }
+    .btn-primary:hover {
+        background: #0056b3;
+    }
+</style>
