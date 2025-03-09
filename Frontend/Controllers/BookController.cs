@@ -17,6 +17,12 @@ namespace Library.Mvc.Controllers
             _contextAccessor = contextAccessor;
         }
 
+        public async Task<IActionResult> GetAllBooks()
+        {
+            var response = await _bookService.GetAllBooksAsync();
+            return View(response.Data);
+        }
+
         public async Task<IActionResult> SearchBooksByTitle(string bookTitle)
         {
             var response = await _bookService.GetBooksByTitle(bookTitle);
@@ -59,6 +65,14 @@ namespace Library.Mvc.Controllers
             await _bookService.CreateBook(request);
             return RedirectToAction("Index", "Home");
         }
+
+        public async Task<IActionResult> DeleteBook(int id)
+        {
+            await _bookService.DeleteBookAsync(id);
+            return RedirectToAction("GetAllBooks", "Book");
+        }
+
+
 
     }
 }

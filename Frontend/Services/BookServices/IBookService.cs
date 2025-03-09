@@ -5,10 +5,12 @@ namespace Library.Mvc.Services.BookServices
 {
     public interface IBookService
     {
+        Task<ApiResponse<List<BookDto>>> GetAllBooksAsync();
         Task<ApiResponse<List<BookDto>>> GetAvailableBooks();
         Task<ApiResponse<List<BookDto>>> GetBooksByTitle(string bookTitle);
         Task<ApiResponse> RentBookAsync(int bookId);
         Task<ApiResponse> ReturnBookAsync(int bookId);
         Task CreateBook(CreateBookRequest request);
+        Task DeleteBookAsync(int bookId);
     }
 }

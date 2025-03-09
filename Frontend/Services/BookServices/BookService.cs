@@ -20,6 +20,38 @@ public class BookService : IBookService
         _contextAccessor = contextAccessor;
     }
 
+    public async Task<ApiResponse<List<BookDto>>> GetAllBooksAsync()
+    {
+        var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            throw new Exception("Access token not found");
+        }
+
+        var roles = GetUserRoles.GetRolesFromToken(accessToken);
+        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        {
+            throw new Exception("Not authorized");
+        }
+
+        var client = _httpClientFactory.CreateClient("AuthorizeClient");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        try
+        {
+            var response = await client.GetFromJsonAsync<ApiResponse<List<BookDto>>>("http://localhost:5097/api/Books");
+
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            {
+                throw new Exception($"API request failed: {response.ErrorMessage}");
+            }
+            return response;
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new Exception($"API request failed: {ex.Message}");
+        }
+    }
     public async Task<ApiResponse<List<BookDto>>> GetAvailableBooks()
     {
         var client = _httpClientFactory.CreateClient();
@@ -133,6 +165,38 @@ public class BookService : IBookService
         try
         {
             var response = await client.PostAsJsonAsync("http://localhost:5097/api/Books", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API request failed: {response.StatusCode}");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new Exception($"API request failed: {ex.Message}");
+        }
+    }
+
+    public async Task DeleteBookAsync(int bookId)
+    {
+        var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            throw new Exception("Access token not found");
+        }
+
+        var roles = GetUserRoles.GetRolesFromToken(accessToken);
+        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        {
+            throw new Exception("Not authorized");
+        }
+
+        var client = _httpClientFactory.CreateClient("AuthorizeClient");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        try
+        {
+            var response = await client.DeleteAsync("http://localhost:5097/api/Books/" + bookId);
 
             if (!response.IsSuccessStatusCode)
             {
