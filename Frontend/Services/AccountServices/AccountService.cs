@@ -1,5 +1,6 @@
 ﻿using Library.Mvc.Dtos;
 using Library.Mvc.Dtos.BookDtos;
+using Library.Mvc.Dtos.TokenDtos;
 using Library.Mvc.Dtos.UserDtos;
 using Library.Mvc.Services.JwtServices;
 using Newtonsoft.Json;
@@ -30,6 +31,29 @@ namespace Library.Mvc.Services.AccountServices
             {
                 throw new Exception("User registration failed");
             }
+        }
+
+        public async Task LoginAsync(UserLoginDto loginDto)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsJsonAsync("http://localhost:5097/api/Auths/CreateToken", loginDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Login failed");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<ApiResponse<TokenDto>>();
+            _contextAccessor.HttpContext.Session.SetString("token", result.Data.AccessToken);
+            _contextAccessor.HttpContext.Session.SetString("RefreshToken", result.Data.RefreshToken);
+        }
+
+        public async Task LogoutAsync()
+        {
+            var token = _contextAccessor.HttpContext.Session.GetString("token");
+            var userId = JwtHelper.GetClaimValue(token, ClaimTypes.NameIdentifier);
+            await RevokeRefreshTokenAsync(userId);
+            _contextAccessor.HttpContext.Session.Remove("token");
+            _contextAccessor.HttpContext.Session.Remove("RefreshToken");
         }
 
         public async Task<ApiResponse<List<BookDto>>> GetRentedBooksByUser()
@@ -63,7 +87,7 @@ namespace Library.Mvc.Services.AccountServices
 
         public async Task RevokeRefreshTokenAsync(string userId)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = _httpClientFactory.CreateClient("AuthorizeClient");
             var response = await client.DeleteAsync("http://localhost:5097/api/Auths/RevokeRefreshToken/" + userId);
             if (response is null)
             {

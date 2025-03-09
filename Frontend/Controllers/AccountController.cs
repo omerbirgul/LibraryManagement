@@ -38,7 +38,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Register(UserRegisterDto registerDto)
     {
         await _accountService.RegisterUserAsync(registerDto);
-        return View();
+        return RedirectToAction("Login");
     }
 
     [HttpGet]
@@ -54,35 +54,16 @@ public class AccountController : Controller
         {
             return View(loginDto);
         }
-        var client = _httpClientFactory.CreateClient();
-        var response = await client.PostAsJsonAsync("http://localhost:5097/api/Auths/CreateToken", loginDto);
 
-        if (!response.IsSuccessStatusCode)
-        {
-            ModelState.AddModelError("", "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
-            return View(loginDto);
-        }
-
-        TempData["LoginFailed"] = "Login failed";
-
-        var result = await response.Content.ReadFromJsonAsync<ApiResponse<TokenDto>>();
-        HttpContext.Session.SetString("token", result.Data.AccessToken);
-        HttpContext.Session.SetString("RefreshToken", result.Data.RefreshToken);
-
+        await _accountService.LoginAsync(loginDto);
         return RedirectToAction("Index", "Home"); 
     }
 
     public async Task<IActionResult> Logout()
     {
-        var token = HttpContext.Session.GetString("token");
-        var userId = JwtHelper.GetClaimValue(token, ClaimTypes.NameIdentifier);
-        //var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-        await _accountService.RevokeRefreshTokenAsync(userId);
-        HttpContext.Session.Remove("token");
-        HttpContext.Session.Remove("RefreshToken");
+        await _accountService.LogoutAsync();
         return RedirectToAction("Index", "Home");
     }
-
 
     [HttpGet]
     public async Task<IActionResult> Profile()
