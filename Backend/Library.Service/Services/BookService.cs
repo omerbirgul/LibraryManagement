@@ -101,7 +101,7 @@ public class BookService : IBookService
         var book = _mapper.Map<Book>(createBookDto);
         await _bookRepository.CreateAsync(book);
         await _unitOfWork.SaveChangesAsync();
-        return ResultService.Success();
+        return ResultService.Success(HttpStatusCode.Created);
     }
 
     public async Task<ResultService> UpdateBookAsync(int bookId, UpdateBookDto updateBookDto)
@@ -127,7 +127,13 @@ public class BookService : IBookService
         var book = await _bookRepository.GetByIdAsync(bookId);
         if (book is null)
             return ResultService.Fail("No books found to delete", HttpStatusCode.NotFound);
-        
+
+        var rentals = await _bookRentalRepository.Where(br => br.BookId == bookId).ToListAsync();
+        foreach (var rental in rentals)
+        {
+            _bookRentalRepository.Delete(rental);
+        }
+
         _bookRepository.Delete(book);
         await _unitOfWork.SaveChangesAsync();
         return ResultService.Success(HttpStatusCode.NoContent);
