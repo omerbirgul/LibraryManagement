@@ -29,5 +29,18 @@ namespace Library.Mvc.Controllers
             await _userService.ApproveUserAsync(userId);
             return RedirectToAction("GetAllUserList");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignToManagerRole(string userId)
+        {
+            await _userService.AssignToManagerRoleAsync(userId);
+            return RedirectToAction("GetAllUserList");
+        }
+
+        public async Task<IActionResult> AssignToAdminRole(string userId)
+        {
+            await _userService.AssignToAdminRoleAsync(userId);
+            return RedirectToAction("GetAllUserList");
+        }
     }
 }

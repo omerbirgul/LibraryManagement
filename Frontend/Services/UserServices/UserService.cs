@@ -110,5 +110,69 @@ public class UserService : IUserService
         return new ApiResponse<List<UserDto>>() { ErrorMessage = "Not authorized" };
     }
 
+    public async Task AssignToAdminRoleAsync(string userId)
+    {
+        var accessToken = _contextAccessor.HttpContext?.Session.GetString("token");
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            throw new Exception("Access token not found");
+        }
+
+        var roles = GetUserRoles.GetRolesFromToken(accessToken);
+        if (!roles.Contains("admin"))
+        {
+            throw new Exception("Not authorized");
+        }
+
+        var client = _clientFactory.CreateClient("AuthorizeClient");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        try
+        {
+            var response = await client.PostAsJsonAsync($"http://localhost:5097/api/Auths/AssignToAdminRole/{userId}", new {});
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API request failed: {response.StatusCode}");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new Exception($"API request failed: {ex.Message}");
+        }
+    }
+
+    public async Task AssignToManagerRoleAsync(string userId)
+    {
+        var accessToken = _contextAccessor.HttpContext?.Session.GetString("token");
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            throw new Exception("Access token not found");
+        }
+
+        var roles = GetUserRoles.GetRolesFromToken(accessToken);
+        if (!roles.Contains("admin"))
+        {
+            throw new Exception("Not authorized");
+        }
+
+        var client = _clientFactory.CreateClient("AuthorizeClient");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        try
+        {
+            var response = await client.PostAsJsonAsync($"http://localhost:5097/api/Auths/AssignToManagerRole/{userId}", new { });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API request failed: {response.StatusCode}");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new Exception($"API request failed: {ex.Message}");
+        }
+    }
+
 }
 
