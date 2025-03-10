@@ -1,10 +1,23 @@
-﻿@model List<BookDto>
+﻿@using Library.Mvc.Services.JwtServices
+@inject IHttpContextAccessor _contextAccessor
+
+@model List<BookDto>
 @{
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Hello ....Username....</h1>
+@{
+    var token = _contextAccessor.HttpContext.Session.GetString("token");
+    string username = "";
+
+    if (!string.IsNullOrEmpty(token))
+    {
+        username = JwtHelper.GetClaimValue(token, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
+    }
+}
+
+<h3>Merhaba @username</span></h3>
 
 
 @if (TempData["ReturnBookSuccess"] != null)

@@ -33,16 +33,16 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <!-- Sol taraf: Proje ismi ve Anasayfa linki -->
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PrizmaLibrary</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <!-- Sol taraf: Proje ismi ve Anasayfa linki -->
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PrizmaLibrary</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
@@ -65,39 +65,42 @@
                         }
                     </ul>
 
+                    <!-- Orta kısım: Kitap Arama Formu -->
+                    <form class="d-flex me-auto" asp-controller="Book" asp-action="SearchBooksByTitle" method="get">
+                        <input class="form-control me-2" type="search" name="bookTitle" placeholder="Kitap ara..." aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Ara</button>
+                    </form>
 
-                <!-- Orta kısım: Kitap Arama Formu -->
-                <form class="d-flex me-auto" asp-controller="Book" asp-action="SearchBooksByTitle" method="get">
-                    <input class="form-control me-2" type="search" name="bookTitle" placeholder="Kitap ara..." aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Ara</button>
-                </form>
+                    <!-- Sağ taraf: Kullanıcı durumu kontrolü -->
+                    <ul class="navbar-nav">
+                        @if (!string.IsNullOrEmpty(username))
+                        {
+                            <li class="nav-item">
+                                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Profile">
+                                    @username @(roles.Any() ? $"({string.Join(", ", roles)})" : "")
+                                </a>
+                            </li>
 
-                <!-- Sağ taraf: Kullanıcı durumu kontrolü -->
-                <ul class="navbar-nav">
-                    @if (!string.IsNullOrEmpty(username))
-                    {
-                    <li class="nav-item">
-                        <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Profile">@username</a>
-                    </li>
-                    <li class="nav-item">
-                        <form method="post" asp-controller="Account" asp-action="Logout">
-                            <button type="submit" class="btn btn-outline-danger">Çıkış Yap</button>
-                        </form>
-                    </li>
-                    }
-                    else
-                    {
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Login">Giriş Yap</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Register">Kayıt Ol</a>
-                    </li>
-                    }
-                </ul>
+                            <li class="nav-item">
+                                <form method="post" asp-controller="Account" asp-action="Logout">
+                                    <button type="submit" class="btn btn-outline-danger">Çıkış Yap</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">Giriş Yap</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Register">Kayıt Ol</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+
 </header>
 
 <div class="container">
