@@ -46,7 +46,7 @@ public class TokenService : ITokenService
 
     public TokenDto CreateToken(AppUser user)
     {
-        var accessTokenExpiration = DateTime.Now.AddMinutes(_jwtSettings.AccessTokenExpiration);
+        var accessTokenExpiration = DateTime.Now.AddSeconds(_jwtSettings.AccessTokenExpiration);
         var refreshTokenExpiration = DateTime.Now.AddDays(_jwtSettings.RefreshTokenExpiration);
         var securityKey = SignService.GetSymmetricSecurityKey(_jwtSettings.SecretKey);
 

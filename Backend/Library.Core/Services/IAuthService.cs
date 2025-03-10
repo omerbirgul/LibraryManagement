@@ -10,6 +10,6 @@ public interface IAuthService
     Task<ResultService<TokenDto>> CreateTokenByRefreshToken(string token);
     Task<ResultService> RevokeRefreshToken(string userId);
     Task<ResultService> ApproveUser(string userId);
-    Task<ResultService> AssignToAdminRole(string userName);
-    Task<ResultService> AssignToManagerRole(string userName);
+    Task<ResultService> AssignToAdminRole(string userId);
+    Task<ResultService> AssignToManagerRole(string userId);
 }

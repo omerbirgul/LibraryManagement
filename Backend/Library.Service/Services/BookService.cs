@@ -76,7 +76,7 @@ public class BookService : IBookService
             .ToListAsync();
 
         if (!rentalHistory.Any())
-            return ResultService<List<BookRentalHistoryDto>>.Fail("This book has no rental history");
+            return ResultService<List<BookRentalHistoryDto>>.Succcess(new List<BookRentalHistoryDto>());
 
         var rentalHistoryDtos = rentalHistory.Select(x => new BookRentalHistoryDto
             (

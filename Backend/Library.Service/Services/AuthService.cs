@@ -133,9 +133,9 @@ public class AuthService : IAuthService
         return ResultService.Success(HttpStatusCode.NoContent);
     }
 
-    public async Task<ResultService> AssignToAdminRole(string userName)
+    public async Task<ResultService> AssignToAdminRole(string userId)
     {
-        var user = await _userManager.FindByNameAsync(userName);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
         {
             return ResultService.Fail("User not found");
@@ -157,9 +157,9 @@ public class AuthService : IAuthService
         return ResultService.Success(HttpStatusCode.NoContent);
     }
 
-    public async Task<ResultService> AssignToManagerRole(string userName)
+    public async Task<ResultService> AssignToManagerRole(string userId)
     {
-        var user = await _userManager.FindByNameAsync(userName);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
         {
             return ResultService.Fail("User not found");

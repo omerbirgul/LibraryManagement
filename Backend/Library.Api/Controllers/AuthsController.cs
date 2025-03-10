@@ -38,27 +38,27 @@ namespace Library.Api.Controllers;
             return CustomActionResult(result);
         }
 
-        [HttpPatch("ApproveUser")]
+        [HttpPatch("ApproveUser/{userId}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> ApproveUser([FromBody] string userId)
+        public async Task<IActionResult> ApproveUser(string userId)
         {
             var result = await _authService.ApproveUser(userId);
             return CustomActionResult(result);
         }
 
-        [HttpPost("AssignToAdminRole")]
+        [HttpPost("AssignToAdminRole/{userId}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> AssignToAdminRole(string userName)
+        public async Task<IActionResult> AssignToAdminRole(string userId)
         {
-            var result = await _authService.AssignToAdminRole(userName);
+            var result = await _authService.AssignToAdminRole(userId);
             return CustomActionResult(result);
         }
 
-        [HttpPost("AssignToManagerRole")]
+        [HttpPost("AssignToManagerRole/{userId}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> AssignToManagerRole([FromBody] string userName)
+        public async Task<IActionResult> AssignToManagerRole(string userId)
         {
-            var result = await _authService.AssignToManagerRole(userName);
+            var result = await _authService.AssignToManagerRole(userId);
             return CustomActionResult(result);
         }
     }
