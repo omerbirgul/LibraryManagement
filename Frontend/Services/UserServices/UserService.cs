@@ -94,7 +94,7 @@ public class UserService : IUserService
         }
 
         var roles = GetUserRoles.GetRolesFromToken(accessToken);
-        if (roles.Contains("admin") || roles.Contains("manager"))
+        if (roles.Contains("admin") && roles.Contains("manager"))
         {
             var client = _clientFactory.CreateClient("AuthorizeClient");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

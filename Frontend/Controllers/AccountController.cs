@@ -23,10 +23,6 @@ public class AccountController : Controller
         _contextAccessor = contextAccessor;
     }
 
-    public IActionResult Index()
-    {
-        return View();
-    }
 
     [HttpGet]
     public IActionResult Register()

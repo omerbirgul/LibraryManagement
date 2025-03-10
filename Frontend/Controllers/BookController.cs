@@ -2,6 +2,7 @@
 using Library.Mvc.Dtos.BookRentalDtos;
 using Library.Mvc.Services.BookServices;
 using Library.Mvc.Services.JwtServices;
+using Library.Mvc.Services.RoleServices;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -62,6 +63,16 @@ namespace Library.Mvc.Controllers
 
         public IActionResult CreateBook()
         {
+            var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var roles = GetUserRoles.GetRolesFromToken(accessToken);
+            if (!roles.Contains("admin") && !roles.Contains("manager"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -81,6 +92,16 @@ namespace Library.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateBook(int bookId)
         {
+            var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var roles = GetUserRoles.GetRolesFromToken(accessToken);
+            if (!roles.Contains("admin") && !roles.Contains("manager"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var book = await _bookService.GetBookById(bookId);
             return View(book.Data);
         }
@@ -94,13 +115,22 @@ namespace Library.Mvc.Controllers
 
         public async Task<IActionResult> GetBookRentalHistory(int id)
         {
+            var accessToken = _contextAccessor.HttpContext.Session.GetString("token");
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var roles = GetUserRoles.GetRolesFromToken(accessToken);
+            if (!roles.Contains("admin") && !roles.Contains("manager"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var response = await _bookService.GetBookRentalHistoryById(id);
 
-            // Eğer veri boşsa, hata vermeden kullanıcıya uygun mesaj göster
             if (response.Data == null || !response.Data.Any())
             {
                 ViewBag.NoHistoryMessage = "Bu kitap için kiralama geçmişi bulunmamaktadır.";
-                return View(new List<BookRentalHistoryDto>()); // Boş bir liste dön
+                return View(new List<BookRentalHistoryDto>());
             }
 
             ViewBag.BookTitle = response.Data.First().BookTitle;

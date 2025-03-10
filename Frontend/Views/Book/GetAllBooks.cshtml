@@ -6,7 +6,12 @@
 
 <div class="container mt-5">
     <div class="card shadow-lg p-4">
-        <h2 class="text-center mb-4">Kitap Listesi</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-center">Kitap Listesi</h2>
+            <form asp-controller="Book" asp-action="CreateBook" method="get">
+                <button type="submit" class="btn btn-success">Yeni Kitap Ekle</button>
+            </form>
+        </div>
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
@@ -41,7 +46,7 @@
                                 </form>
                                 <form asp-controller="Book" asp-action="GetBookRentalHistory" method="get">
                                     <input type="hidden" name="id" value="@book.Id" />
-                                    <button type="submit" class="btn btn-info btn-sm">Kiralama Geçmişi</button>
+                                    <button type="submit" class="btn btn-info btn-sm">Geçmiş</button>
                                 </form>
                             </div>
                         </td>
@@ -51,6 +56,7 @@
         </table>
     </div>
 </div>
+
 
 <style>
     .container {

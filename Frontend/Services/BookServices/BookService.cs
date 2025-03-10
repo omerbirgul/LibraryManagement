@@ -30,7 +30,7 @@ public class BookService : IBookService
         }
 
         var roles = GetUserRoles.GetRolesFromToken(accessToken);
-        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        if (!roles.Contains("admin") && !roles.Contains("manager"))
         {
             throw new Exception("Not authorized");
         }
@@ -76,7 +76,7 @@ public class BookService : IBookService
         }
 
         var roles = GetUserRoles.GetRolesFromToken(accessToken);
-        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        if (!roles.Contains("admin") && !roles.Contains("manager"))
         {
             return new ApiResponse<BookDto> { ErrorMessage = "Not authorized" };
         }
@@ -188,7 +188,7 @@ public class BookService : IBookService
         }
 
         var roles = GetUserRoles.GetRolesFromToken(accessToken);
-        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        if (!roles.Contains("admin") && !roles.Contains("manager"))
         {
             throw new Exception("Not authorized");
         }
@@ -220,7 +220,7 @@ public class BookService : IBookService
         }
 
         var roles = GetUserRoles.GetRolesFromToken(accessToken);
-        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        if (!roles.Contains("admin") && !roles.Contains("manager"))
         {
             throw new Exception("Not authorized");
         }
@@ -252,7 +252,7 @@ public class BookService : IBookService
         }
 
         var roles = GetUserRoles.GetRolesFromToken(accessToken);
-        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        if (!roles.Contains("admin") && !roles.Contains("manager"))
         {
             throw new Exception("Not authorized");
         }
@@ -284,7 +284,7 @@ public class BookService : IBookService
         }
 
         var roles = GetUserRoles.GetRolesFromToken(accessToken);
-        if (!roles.Contains("admin") || !roles.Contains("manager"))
+        if (!roles.Contains("admin") && !roles.Contains("manager"))
         {
             throw new Exception("Not authorized");
         }

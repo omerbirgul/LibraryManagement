@@ -24,7 +24,7 @@ namespace Library.Mvc.Controllers
                 return RedirectToAction("Login", "Account");
             }
             var roles = GetUserRoles.GetRolesFromToken(accessToken);
-            if(!roles.Contains("admin") || !roles.Contains("manager"))
+            if(!roles.Contains("admin") && !roles.Contains("manager"))
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -40,7 +40,7 @@ namespace Library.Mvc.Controllers
                 return RedirectToAction("Login", "Account");
             }
             var roles = GetUserRoles.GetRolesFromToken(accessToken);
-            if (!roles.Contains("admin") || !roles.Contains("manager"))
+            if (!roles.Contains("admin") && !roles.Contains("manager"))
             {
                 return RedirectToAction("Index", "Home");
             }
